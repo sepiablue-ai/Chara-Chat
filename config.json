@@ -1,0 +1,47 @@
+{
+  "llm": {
+    "url": "http://127.0.0.1:1234/api/v1/chat",
+    "api_mode": "lmstudio_native",
+    "model": "google/gemma-4-12b-qat",
+    "max_tokens": 4096,
+    "temperature": 0.8
+  },
+  "comfyui": {
+    "url": "http://127.0.0.1:8188",
+    "output_dir": "C:\\comfyui\\ComfyUI_windows_portable\\ComfyUI\\output"
+  },
+  "tts": {
+    "url": "http://127.0.0.1:7860",
+    "enabled_by_default": true,
+    "checkpoint": "outputs\\sophie_lora\\checkpoint_final.safetensors"
+  },
+  "image": {
+    "enabled_by_default": true,
+    "parallel_generation": true
+  },
+  "chat": {
+    "history_window": 4,
+    "memory_enabled": true,
+    "memory_recall_only": true,
+    "memory_max_events": 8,
+    "memory_max_chars": 700
+  },
+  "streamlit": {
+    "port": 8501
+  },
+  "character": {
+    "display_name": "さやか",
+    "lora_name": "sophie_iluxlv30.safetensors",
+    "base_positive_prompt": "1girl, charsophie, solo, black hair, black eyes, updo, masterpiece, best quality, good quality, smiling,",
+    "prompts": {
+      "character_setting": "prompts/character_setting.md",
+      "main_director": "prompts/main_ai_director.md",
+      "voice_examples": "prompts/voice_examples.md"
+    },
+    "clothing": {
+      "default": "casual clothes",
+      "pajamas": "pajamas",
+      "formal": "formal suit"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+gradio
+requests
+gradio_client
+json-repair
+websockets

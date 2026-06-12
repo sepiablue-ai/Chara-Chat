@@ -1,0 +1,148 @@
+{
+  "3": {
+    "inputs": {
+      "seed": 1107562533721401,
+      "steps": 24,
+      "cfg": 5.5,
+      "sampler_name": "euler",
+      "scheduler": "sgm_uniform",
+      "denoise": 1,
+      "model": [
+        "11",
+        0
+      ],
+      "positive": [
+        "6",
+        0
+      ],
+      "negative": [
+        "7",
+        0
+      ],
+      "latent_image": [
+        "5",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "Kサンプラー"
+    }
+  },
+  "4": {
+    "inputs": {
+      "ckpt_name": "illustriousXLPersonalMerge_v30Noob10based.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "チェックポイントを読み込む"
+    }
+  },
+  "5": {
+    "inputs": {
+      "width": 768,
+      "height": 1152,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "空の潜在画像"
+    }
+  },
+  "6": {
+    "inputs": {
+      "text": "___POSITIVE_PROMPT___",
+      "clip": [
+        "10",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIPテキストエンコード（プロンプト）"
+    }
+  },
+  "7": {
+    "inputs": {
+      "text": "lowres, (bad), error, fewer, extra, missing, worst quality, jpeg artifacts, low quality, unfinished, displeasing, oldest, early, chromatic aberration, signature, extra digits, artistic error, username, tongue,",
+      "clip": [
+        "10",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIPテキストエンコード（プロンプト）"
+    }
+  },
+  "8": {
+    "inputs": {
+      "samples": [
+        "3",
+        0
+      ],
+      "vae": [
+        "4",
+        2
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAEデコード"
+    }
+  },
+  "9": {
+    "inputs": {
+      "filename_prefix": "AI_Chat_App",
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "画像を保存"
+    }
+  },
+  "10": {
+    "inputs": {
+      "lora_name": "___LORA_NAME___",
+      "strength_model": 0.5,
+      "strength_clip": 0.5,
+      "model": [
+        "4",
+        0
+      ],
+      "clip": [
+        "4",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "LoRAを読み込む"
+    }
+  },
+  "11": {
+    "inputs": {
+      "enabled": true,
+      "blend_weight": 0.4,
+      "degree": 4,
+      "ridge_lambda": 0.1,
+      "window_size": 2,
+      "flex_window": 0.75,
+      "warmup_steps": 5,
+      "tail_actual_steps": 4,
+      "min_fit_points": 6,
+      "debug": false,
+      "model": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "SpectrumApplySDXL",
+    "_meta": {
+      "title": "Spectrum Apply SDXL"
+    }
+  }
+}
