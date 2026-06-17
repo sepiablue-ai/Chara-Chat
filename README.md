@@ -45,20 +45,27 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 2. 環境変数の設定 (`.env`)
+### 2. LLMバックエンド（Ollama）の準備
+本システムはローカルLLMサービスとして [Ollama](https://ollama.com/) を使用します。
+1. Ollamaをインストールして起動しておきます。
+2. 使用するモデル（デフォルトでは `gemma4:12b-it-qat`）をあらかじめプルしておきます。
+   ```bash
+   ollama pull gemma4:12b-it-qat
+   ```
 
-自身の環境に合わせて、各バックエンドエンジンのパスやGPU割り当てを設定します。
-`.env.example` をコピーして `.env` を作成してください。
+### 3. 環境変数の設定 (`.env`)
+
+`.env.example` をコピーして `.env` を作成します。
 
 ```bash
 copy .env.example .env
 ```
-`.env` ファイルをテキストエディタで開き、`LM_STUDIO_PATH` や `COMFYUI_PATH` を自身の環境に合わせて書き換えます。シングルGPU環境の場合は、`COMFYUI_GPU_ID=0` と `TTS_GPU_ID=0` に設定してください。
+`.env` ファイルをテキストエディタで開き、`OLLAMA_MODEL` や各種GPU割り当てを自身の環境に合わせて書き換えます。シングルGPU環境の場合は、`COMFYUI_GPU_ID=0` と `TTS_GPU_ID=0` に設定してください。
 
-### 3. 起動と終了
+### 4. 起動と終了
 
-- **起動**: プロジェクトルートにある **`start.bat`** をダブルクリックして実行します。全てのバックエンドが起動し、ブラウザが利用可能になるまで待機します。
-- **終了**: **`stop.bat`** を実行してサービスを安全に終了させ、VRAMを解放します。
+- **起動**: プロジェクトルートにある **`start.bat`** をダブルクリックして実行します。自動的にOllamaの動作確認、および各種サービス（ComfyUI, Irodori-TTS, Gradio）がバックグラウンドで起動します。
+- **終了**: **`stop.bat`** を実行してサービスを終了させ、VRAMを解放します（Ollamaは起動したままになります）。
 
 ---
 
@@ -92,5 +99,46 @@ Chara-Chat/
 │   ├── character_setting.md   # キャラクター性格設定
 │   ├── main_ai_director.md    # AIディレクター指示プロンプト
 │   └── voice_examples.md      # セリフ口調の参考例
-└── workflow_api.json          # ComfyUI ワークフロー定義
+├── workflow_api.json          # ComfyUI ワークフロー定義
+│
+├── eval_state_cases.py        # 個別テストケース評価スクリプト
+├── run_testcase_suite.py      # テストスイート一括実行スクリプト
+├── summarize_testcase_results.py # テスト結果の要約表示スクリプト
+└── testcase/                  # テストケース定義（Markdown）格納用ディレクトリ
+```
+
+---
+
+## 🧪 テストスイートの実行
+
+本エンジンには、プロンプト変更によるキャラクターのセリフ、情景（シーン）、服装の判定挙動の変化を検証するための自動テスト環境が備わっています。
+
+### 1. テストスイートの一括実行
+[testcase/](file:///C:/Users/sepia/python/Chara-Chat/testcase/) ディレクトリ内の全てのテストケース（Markdown）を読み込み、自動的にロールプレイセッションを実行して判定精度を測定します。
+
+```bash
+# 仮想環境が有効な状態で実行
+python run_testcase_suite.py [テストケースフォルダ] [制限件数] [--no-image]
+
+# 例：testcaseフォルダのケースを画像生成なしで最大2件実行
+python run_testcase_suite.py testcase 2 --no-image
+```
+実行結果は [testcase_results/](file:///C:/Users/sepia/python/Chara-Chat/testcase_results/) にJSONファイル（および設定されていれば画像ファイルのコンタクトシート）として出力されます。このディレクトリはGit管理外です。
+
+### 2. 個別ケースの簡易実行
+特定の短い対話ケースを指定して実行し、状態変化の履歴をターミナル上にJSON形式で出力します。
+
+```bash
+# ケースIDと画像生成の実行ターンを指定して実行
+python eval_state_cases.py [ケースID(1〜5)] [画像生成を行うターン数(省略時は0)]
+
+# 例：ケース1を実行し、3ターン目で画像を生成する
+python eval_state_cases.py 1 3
+```
+
+### 3. テスト結果の要約表示
+直近に実行したテストスイートの結果（`testcase_results/` 内の各JSONファイル）をパースし、各ターンの「想定（expected）」と「実際（actual）」の出力を一覧で比較します。
+
+```bash
+python summarize_testcase_results.py
 ```
