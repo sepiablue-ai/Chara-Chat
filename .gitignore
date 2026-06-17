@@ -8,6 +8,7 @@ __pycache__/
 # Application Data
 logs/
 memories/
+testcase_results/
 
 # OS generated files
 .DS_Store
