@@ -7,6 +7,8 @@ import time
 import uuid
 from datetime import datetime
 import random
+from scene_state.normalizer import DynamicSceneRegistry, normalize_dynamic_candidate
+from tag_utils import merge_prompt_tags
 from urllib.parse import urlparse, urlunparse
 import websockets
 from gradio_client import Client
@@ -196,14 +198,17 @@ class ChatEngine:
         self.config = self._load_config()
         self._apply_config()
         self.base_dir = "./memories"
+        import os
         os.makedirs(self.base_dir, exist_ok=True)
         
-        # ボイス用プロンプトの読み込み
         voice_path = self.character_config.get("prompts", {}).get("voice_examples", "./prompts/voice_examples.md")
         self.voice_examples = self._load_voice_examples(voice_path)
         
         self.tts_client = None
         self._tts_initialized = False
+        self.scene_state_config = self.config.get("scene_state", {})
+        registry_path = self.scene_state_config.get("registry_path", "scene_state/dynamic_registry.json")
+        self.dynamic_registry = DynamicSceneRegistry(registry_path)
         self.reset_state()
 
     def _load_config(self):
@@ -712,740 +717,156 @@ class ChatEngine:
                 "tag_hint": tags,
             }
 
-        # Strong current-intent rules. Many prompts mention a previous place
-        # first ("after BBQ...", "after the dragon..."), then the actual
-        # destination/clothes. Prefer explicit destination/change markers before
-        # broad context keywords.
-        if "開園前の入場ゲート" in text:
-            return transition("themepark_entrance_gate", "sneakers_casual", "テーマパークの入場ゲート", "theme park entrance gate, sneakers, denim")
-        if "バルコニーから夕方の海" in text or "軽い部屋着" in text:
-            return transition("resort_hotel_room", "resort_roomwear", "リゾートホテルの客室", "resort hotel room, ocean balcony, roomwear")
-        if ("朝から雨" in text or "雨の朝" in text) and "キッチン" in text:
-            return transition("rainy_morning_kitchen", "sweatshirt", "雨の朝のキッチン", "rainy morning kitchen, coffee, sweatshirt")
-        if "宅配" in text or "フリース" in text and "玄関" in text:
-            return transition("rainy_home_entrance", "white_shirt_fleece", "雨の日の自宅玄関", "rainy home entrance, parcel delivery, fleece jacket")
-        if "カラオケ" in text:
-            return transition("karaoke_room", "business_jacketpants", "二次会のカラオケ", "karaoke_room, microphone, party_lighting, singing")
-        if "開園前" in text or ("到着" in text and "Tシャツ" in text and "スニーカー" in text):
-            return transition("amusement_park_gate", "sneakers_casual", "遊園地の入場ゲート", "amusement_park_gate, sneakers, sunny")
-        if "バルコニー" in text:
-            return transition("castle_balcony", "court_dress", "王城のバルコニー", "castle_balcony, night_sky, court_dress")
-        if "バルに" in text or "洋風居酒屋" in text:
-            return transition("western_pub", "casual_shirt_jeans", "洋風居酒屋へ移動", "pub, bar_table, casual shirt, jeans, drink")
-        if "ゲームコーナー" in text:
-            return transition("retro_game_corner", "yukata", "旅館のゲームコーナー", "retro_game_center, arcade_cabinets, yukata")
-        if "ドテラ" in text and ("夜食" in text or "お母さん" in text) and current_clothing == "fleece":
-            return transition("home_living_room", "fleece", "自宅リビングでフリースを保持", "living_room, fleece_jacket, sweatshirt, loungewear")
-        if "ドテラ" in text and ("居間" in text or "リビング" in text):
-            return transition("parents_home_living_room", "dotera", "実家の居間", "living_room, breakfast, kotatsu, dotera")
-        if "ドテラ" in text:
-            return transition("parents_home_bedroom", "dotera", "実家の自室でドテラ", "bedroom, parents_home, sweatshirt, dotera")
-        if "フリース" in text and ("リビング" in text or "夜食" in text):
-            return transition("home_living_room", "fleece", "自宅リビングでフリース", "living_room, fleece_jacket, sweatshirt, loungewear")
-        if "フリース" in text:
-            return transition("home_room", "fleece", "自室でフリースを羽織る", "bedroom, fleece_jacket, sweatshirt, loungewear")
-        if "スウェット" in text and ("家に移動" in text or "実家" in text or "貸す" in text or "片付け" in text):
-            loc = "parents_home_bedroom" if "実家" in text else "home_room"
-            return transition(loc, "sweatshirt", "自室でスウェットに着替える", "bedroom, sweatshirt, loungewear")
-        if ("宿屋" in text or "旅籠" in text or "ベッド" in text) and ("部屋着" in text or "寝間着" in text or "ガウン" in text):
-            return transition("inn_room", "inn_gown", "宿屋の客室", "inn_room, bed, gown, warm_lighting")
-        if "時計塔" in text and ("魔法" in text or "魔術師" in text):
-            return transition("magic_academy_clocktower", "mage_uniform", "魔法学校の時計塔前", "magic_academy, clocktower, mage_uniform")
-        if "焚き火" in text:
-            return transition("ruins_campfire", "wool_cloak", "遺跡内部の焚き火前", "campfire, ancient_ruins_interior, wool_cloak")
-        if "古代遺跡" in text or "遺跡群" in text:
-            return transition("ancient_ruins", "linen_underwear", "古代遺跡", "ancient_ruins, desert, linen_underwear")
-        if "リネン" in text or "水場" in text:
-            return transition("oasis_waterfront", "linen_underwear", "オアシスの水辺", "oasis_water, linen_underwear, palm_trees")
-        if "和食レストラン" in text or "和食屋" in text:
-            return transition("japanese_restaurant", "sneakers_casual", "駅ビルの和食レストラン", "japanese_restaurant, dinner, casual clothes")
-        if "居酒屋" in text and ("Tシャツ" in text or "パーカー" in text or "打ち上げ" in text):
-            return transition("izakaya_private_room", "live_tshirt_hoodie", "ライブ後の居酒屋個室", "izakaya, private_room, hoodie, live_tshirt")
-        if "読書スペース" in text or "メガネ" in text:
-            return transition("library_reading_space", "sweater_glasses", "図書館の読書スペース", "library, reading_space, glasses, sweater")
-        if "アパレルショップ" in text or "セレクトショップ" in text:
-            return transition("apparel_shop", "sneakers_casual", "アパレルショップ店内", "apparel_shop, clothes_rack, jeans, sneakers")
-        if "フードコート" in text:
-            return transition("food_court", "sneakers_casual", "モールのフードコート", "food_court, crowded, casual")
-        if "購入したワンピース" in text or ("シアター" in text and "ワンピース" in text):
-            return transition("movie_theater", "one_piece", "映画館シアター内", "movie_theater, cinema_seat, one-piece dress")
-        if "ライトアップ" in text or "夜桜" in text:
-            return transition("illuminated_sakura_path", "spring_coat", "夜桜の並木道", "night_sakura, illuminated, spring_coat")
-        if "ブルーシート" in text:
-            return transition("sakura_picnic_sheet", "spring_coat", "お花見のブルーシート", "sakura, picnic_sheet, blue_sheet, spring_coat")
-        if "屋台" in text:
-            return transition("sakura_food_stalls", "casual", "屋台が立ち並ぶ通り", "sakura, food_stalls, street_food, spring casual")
-        if "甘酒" in text and ("茶屋" in text or "暖簾" in text):
-            return transition("amazake_tea_house", "spring_coat", "甘酒茶屋", "tea_house, amazake, spring_coat")
-        if "プール" in text and ("入場ゲート" in text or "チケット" in text):
-            return transition("pool_gate", "tshirt_shorts", "市民プール入場ゲート", "pool_gate, summer, t-shirt, shorts")
-        if "更衣室" in text and "水着" in text:
-            return transition("pool_locker_room", "swimsuit", "プールの更衣室", "locker_room, swimsuit")
-        if "パラソルベンチ" in text or ("パラソル" in text and "ベンチ" in text):
-            return transition("pool_parasol_bench", "rash_guard", "プールサイドのパラソルベンチ", "poolside, parasol_bench, rash_guard, swimsuit")
-        if "鳥居" in text or "初詣" in text or "除夜の鐘" in text:
-            return transition("shrine_torii", "down_scarf_gloves", "神社の鳥居前", "shrine_torii, snow, down_jacket, scarf, gloves")
-        if "甘酒配布" in text or "お神酒" in text or ("甘酒" in text and "テント" in text):
-            return transition("shrine_amazake_stand", "down_jacket", "境内の甘酒配布所", "shrine, amazake_stand, down_jacket")
-        if "ファミレス" in text and ("ダウン" in text or "セーター" in text or "暖房" in text):
-            return transition("late_night_family_restaurant", "winter_indoor", "深夜のファミリーレストラン", "family_restaurant, midnight, sweater")
-        if "深夜" in text and "ファミリーレストラン" in text:
-            return transition("late_night_family_restaurant", "winter_indoor", "深夜のファミリーレストラン", "family_restaurant, midnight, sweater")
-
-        # Music / idol testcase rules.
-        if "リハーサルステージ" in text or ("照明チェック" in text and "レッスン着" in text):
-            return transition("live_house_rehearsal_stage", "lesson_wear", "ライブハウスのリハーサルステージ", "live house rehearsal stage, empty audience, lesson wear")
-        if "楽屋" in text and ("ステージ衣装" in text or "鏡前" in text):
-            return transition("live_house_dressing_room", "idol_stage_costume", "ライブハウスの楽屋", "dressing room, mirror lights, idol stage costume")
-        if "ペンライト" in text or "イントロ" in text and "センター" in text:
-            return transition("idol_live_stage", "idol_stage_costume", "ライブ本番のステージ", "idol live stage, penlights, stage lights, idol costume")
-        if "舞台袖" in text or "スタッフさんに水" in text:
-            return transition("live_house_stage_wing", "idol_stage_costume", "ライブハウスの舞台袖", "stage wing, backstage, water bottle, idol costume")
-        if "チェキ" in text or "物販ブース" in text:
-            return transition("idol_merch_cheki_booth", "idol_hoodie", "物販・チェキ撮影ブース", "merch booth, cheki photo table, official hoodie")
-        if "白い撮影スタジオ" in text or "カメラテスト" in text:
-            return transition("white_cyclorama_studio", "casual", "白ホリ撮影スタジオ", "white cyclorama studio, camera test, casual clothes")
-        if "メイクルーム" in text or "白いワンピース" in text and "ヘアメイク" in text:
-            return transition("makeup_room", "white_one_piece", "メイクルーム", "makeup room, vanity lights, white one-piece dress")
-        if "人工の夕焼け" in text or "カメラ前" in text and "ワンピース" in text:
-            return transition("mv_room_set", "white_one_piece", "MV用の室内セット", "music video room set, artificial sunset, white dress")
-        if "ダンスパート" in text or "黒いダンス衣装" in text:
-            return transition("black_dance_mv_set", "dance_costume", "黒背景のダンス撮影セット", "black dance set, smoke, dance costume")
-        if "差し入れ" in text and "カーディガン" in text:
-            return transition("studio_rest_area", "dance_cardigan", "撮影スタジオの休憩スペース", "studio rest area, sofa, cardigan over dance costume")
-
-        # Hospital / rescue testcase rules.
-        if "ナースステーション" in text and ("カーディガン" in text or "お茶" in text):
-            return transition("night_nurse_station", "doctor_cardigan", "夜のナースステーション", "nurse station, night shift, white medical coat, cardigan")
-        if "救急搬送" in text or ("処置室" in text and "手袋" in text):
-            return transition("emergency_treatment_room", "medical_gloves_mask", "救急処置室", "emergency treatment room, medical gloves, surgical mask")
-        if "ベッドサイド" in text and "患者" in text:
-            return transition("emergency_bedside", "medical_gloves_mask", "救急処置室のベッドサイド", "hospital bedside, emergency room, medical mask, gloves")
-        if "ストレッチャー" in text or "検査室" in text:
-            return transition("hospital_night_corridor", "medical_gloves_mask", "病院の夜間廊下", "hospital corridor at night, stretcher, medical mask")
-        if "消防署の車庫" in text or "救助資機材" in text:
-            return transition("fire_station_garage", "rescue_uniform", "消防署の車庫", "fire station garage, rescue equipment, orange rescue uniform")
-        if "山道の訓練現場" in text or "ハーネス" in text and "斜面" in text:
-            return transition("mountain_rescue_training_site", "rescue_harness", "山道の救助訓練現場", "mountain rescue training site, helmet, safety harness")
-        if "崖下" in text or "要救助者" in text:
-            return transition("cliff_rescue_point", "rescue_harness", "崖下の救助ポイント", "cliff rescue point, rope, helmet, harness")
-        if "反射材付き" in text or ("雨" in text and "救助" in text):
-            return transition("rainy_rescue_training_site", "rescue_rain_jacket", "雨の救助訓練現場", "rainy rescue site, reflective waterproof jacket")
-        if "報告書" in text and "消防署" in text:
-            return transition("fire_station_office", "work_shirt", "消防署の事務室", "fire station office, report writing, navy work shirt")
-
-        # Travel / hotel testcase rules.
-        if "空港の出発ロビー" in text:
-            return transition("airport_departure_lobby", "travel_casual", "空港の出発ロビー", "airport departure lobby, suitcase, travel hoodie, jeans")
-        if "飛行機" in text and "ブランケット" in text:
-            return transition("airplane_cabin", "travel_blanket", "飛行機の機内", "airplane cabin, window seat, airplane blanket")
-        if "南国の空港" in text or "湿った熱気" in text:
-            return transition("tropical_airport_exit", "summer_dress", "南国リゾートの空港出口", "tropical airport exit, palm trees, summer dress")
-        if "リゾートホテルのロビー" in text or "ウェルカムドリンク" in text:
-            return transition("resort_hotel_lobby", "summer_dress", "リゾートホテルのロビー", "resort hotel lobby, welcome drink, ocean breeze, summer dress")
-        if "バルコニーから夕方の海" in text or "軽い部屋着" in text:
-            return transition("resort_hotel_room", "resort_roomwear", "リゾートホテルの客室", "resort hotel room, ocean balcony, roomwear")
-        if "旅館の玄関" in text or "女将" in text:
-            return transition("onsen_ryokan_entrance", "neat_travel_casual", "温泉旅館の玄関", "onsen ryokan entrance, neat travel casual")
-        if "宿の浴衣" in text or ("畳の香り" in text and "浴衣" in text):
-            return transition("onsen_inn_room", "yukata", "温泉旅館の客室", "tatami ryokan room, yukata")
-        if "脱衣所" in text or "大浴場" in text:
-            return transition("onsen_dressing_room", "towel", "温泉の脱衣所", "onsen dressing room, bath towel, steam")
-        if "宴会場" in text or "夕食のお膳" in text:
-            return transition("ryokan_banquet_hall", "yukata", "旅館の宴会場", "ryokan banquet hall, dinner tray, yukata")
-        if "中庭" in text and ("羽織" in text or "池" in text):
-            return transition("ryokan_garden_courtyard", "yukata_haori", "旅館の中庭", "ryokan garden courtyard, pond, yukata, haori")
-
-        # Theme park testcase rules.
-        if "開園前の入場ゲート" in text:
-            return transition("themepark_entrance_gate", "sneakers_casual", "テーマパークの入場ゲート", "theme park entrance gate, sneakers, denim")
-        if "ジェットコースター" in text and "薄いパーカー" in text:
-            return transition("roller_coaster_queue", "sneakers_parka", "ジェットコースターの待機列", "roller coaster queue, light hoodie, sneakers")
-        if "透明ポンチョ" in text or ("雨雲" in text and "石畳" in text):
-            return transition("rainy_themepark_path", "clear_poncho", "雨のテーマパーク通路", "rainy theme park path, transparent poncho, wet pavement")
-        if "テーマレストラン" in text or "カチューシャ" in text and "ランチ" in text:
-            return transition("theme_restaurant", "character_headband", "園内テーマレストラン", "theme restaurant, character headband, lunch")
-        if "夜のパレード" in text or "光るワンド" in text:
-            return transition("night_parade_route", "character_headband", "夜パレードの沿道", "night parade route, glowing wand, character headband")
-        if "夏イベント" in text or "水濡れショーを待" in text:
-            return transition("summer_event_plaza", "tshirt_shorts", "夏イベント広場", "summer event plaza, mist, t-shirt, shorts")
-        if "ずぶ濡れゾーン" in text or "レインポンチョ" in text:
-            return transition("splash_show_front_area", "rain_poncho", "水濡れショーの前方エリア", "splash show front area, rain poncho, t-shirt, shorts")
-        if "日なたのベンチ" in text or "濡れた髪" in text:
-            return transition("themepark_bench", "tshirt_shorts", "パーク内のベンチ", "theme park bench, towel, wet hair, t-shirt, shorts")
-        if "限定Tシャツ" in text and "ショップ" in text:
-            return transition("themepark_shop_front", "limited_tshirt", "テーマパークのショップ前", "theme park shop front, limited edition t-shirt")
-        if "観覧車" in text and "夜景" in text:
-            return transition("night_ferris_wheel", "limited_tshirt_hoodie", "夜の観覧車", "night ferris wheel, light hoodie, limited t-shirt")
-
-        # Rainy home testcase rules.
-        if "玄関マット" in text or ("びしょ濡れ" in text and "コート" in text):
-            return transition("rainy_home_entrance", "wet_coat_umbrella", "雨の日の自宅玄関", "rainy home entrance, wet coat, umbrella")
-        if "洗面所" in text and "バスタオル" in text:
-            return transition("home_washroom", "towel", "自宅の洗面所", "home washroom, bath towel, wet hair")
-        if "ふわふわのルームウェア" in text or "ホットミルク" in text:
-            return transition("home_living_room", "fluffy_roomwear", "自宅のリビング", "living room, hot milk, fluffy roomwear")
-        if "ブランケット" in text and "雨音" in text:
-            return transition("rainy_living_room", "roomwear_blanket", "雨音のするリビング", "rainy living room, blanket, movie, dim light")
-        if "寝室" in text and "パジャマ" in text:
-            return transition("bedroom_night", "pajamas", "夜の寝室", "bedroom at night, bed, pajamas")
-        if "雨の朝" in text and "キッチン" in text:
-            return transition("rainy_morning_kitchen", "sweatshirt", "雨の朝のキッチン", "rainy morning kitchen, coffee, sweatshirt")
-        if "オンライン会議" in text or "Webカメラ" in text:
-            return transition("home_work_desk", "white_shirt_sweatpants", "自宅の仕事デスク", "home work desk, webcam, white shirt, sweatpants")
-        if "窓際" in text and "カーディガン" in text:
-            return transition("home_window_side", "white_shirt_cardigan", "自宅の窓際", "home window side, rain, white shirt, cardigan")
-        if "宅配" in text or "フリース" in text and "玄関" in text:
-            return transition("rainy_home_entrance", "white_shirt_fleece", "雨の日の自宅玄関", "rainy home entrance, parcel delivery, fleece jacket")
-        if "読書" in text and "パジャマ" in text:
-            return transition("night_reading_space", "pajamas", "夜の自宅の読書スペース", "night reading space, rain, pajamas, book")
-
-        # Historical / oriental testcase rules.
-        if "長屋" in text and ("狭い部屋" in text or "ゴロゴロ" in text):
-            return transition("nagaya_room", "light_yukata", "長屋の自室", "edo nagaya room, tatami, thin summer yukata")
-        if "共同井戸" in text or "井戸" in text and "たらい" in text:
-            return transition("nagaya_well", "light_yukata", "長屋の共同井戸端", "edo outdoor well, bucket, thin summer yukata")
-        if "大名屋敷" in text and ("門" in text or "くぐろう" in text):
-            return transition("daimyo_mansion_gate", "formal_kimono_hakama", "大名屋敷の玄関口", "daimyo mansion gate, formal kimono, hakama")
-        if "広間" in text and "畳" in text:
-            return transition("daimyo_great_hall", "formal_kimono_hakama", "大名屋敷の大広間", "tatami great hall, formal kimono, hakama")
-        if "縁側" in text:
-            return transition("nagaya_veranda", "loose_kimono", "長屋の縁側", "edo veranda, watermelon, loose kimono")
-        if "陣幕" in text:
-            return transition("military_tent_night", "hitatare", "陣幕の内部", "sengoku military tent, map, torchlight, indigo hitatare")
-        if "物見櫓" in text:
-            return transition("fort_watchtower", "hitatare", "砦の物見櫓", "wooden watchtower, dawn, indigo hitatare")
-        if ("雨" in text or "最前線" in text or "戦場" in text) and current_clothing == "samurai_armor":
-            return transition("rainy_battlefield_frontline", "samurai_armor", "雨の戦場の最前線", "rainy battlefield frontline, mud, samurai armor, o-yoroi, kabuto helmet")
-        if "大鎧" in text or "甲冑" in text or "兜" in text:
-            loc = "rainy_battlefield_frontline" if "雨" in text or "最前線" in text else "battlefield_headquarters"
-            return transition(loc, "samurai_armor", "甲冑を着用", "sengoku battlefield, samurai armor, o-yoroi, kabuto helmet")
-        if "天守閣" in text:
-            return transition("castle_keep", "kosode", "お城の天守閣", "castle keep, view from tower, kosode kimono")
-        if "洋館の書斎" in text:
-            return transition("taisho_western_study", "taisho_hakama_haori", "洋館の書斎", "taisho era study, bookshelves, kimono, hakama, black haori")
-        if "路面電車" in text:
-            return transition("taisho_tram_interior", "taisho_hakama_haori", "路面電車の車内", "streetcar interior, taisho city, kimono, hakama, black haori")
-        if "喫茶店" in text or ("モダンなカフェ" in text and "羽織" in text):
-            return transition("taisho_cafe", "taisho_hakama", "大正浪漫の喫茶店", "taisho cafe, round stool, kimono, hakama, no haori")
-        if "赤レンガ" in text:
-            return transition("red_brick_slope", "taisho_hakama", "赤レンガの坂道", "red brick slope, rain, umbrella, taisho kimono, hakama")
-        if "ネルシャツ" in text:
-            return transition("friends_tatami_room", "borrowed_shirt_trousers", "友人の和室", "tatami room, flannel shirt, trousers")
-        if "十二単" in text or "几帳" in text:
-            return transition("shinden_inner_room", "juni_hitoe", "寝殿の奥", "heian palace interior, kichou curtain, juni-hitoe")
-        if "透廊" in text or "渡り廊下" in text:
-            return transition("shinden_corridor", "juni_hitoe", "寝殿の透廊", "heian corridor, garden pond, juni-hitoe")
-        if "紫宸殿" in text or "唐衣" in text:
-            return transition("shishinden_hall", "karaginu_mo", "御所の紫宸殿", "imperial palace hall, formal heian court dress, karaginu, mo")
-        if "遣水" in text or "庭園の小川" in text:
-            return transition("imperial_garden_stream", "karaginu_mo", "御所の庭園", "heian garden stream, cherry petals, formal court dress")
-        if "単" in text and "緋色の袴" in text:
-            return transition("shinden_bedroom_night", "heian_hitoe_hakama", "寝殿の自室", "heian bedroom, candlelight, hitoe kimono, scarlet hakama")
-
-        # SF / cyberpunk testcase rules.
-        if "酸性雨" in text or "ビニールコート" in text:
-            return transition("cyberpunk_slum_alley", "vinyl_coat", "酸性雨の路地裏", "cyberpunk alley, acid rain, hologram neon, hooded vinyl coat")
-        if "サイバーカフェ" in text:
-            return transition("underground_cyber_cafe", "vinyl_coat", "地下のサイバーカフェ", "underground cyber cafe, junk parts, neon, vinyl coat")
-        if "秘密のアジト" in text or "サイバースーツ" in text and "アジト" in text:
-            return transition("hacker_secret_hideout", "cyber_suit", "ハッカーの秘密アジト", "hacker hideout, main console, cyber suit")
-        if "電脳" in text or "マトリクス" in text:
-            return transition("cyberspace_matrix", "cyber_suit", "サイバースペース", "cyberspace, data stream, holographic grid, cyber suit")
-        if "冷却用" in text or "インナー姿" in text:
-            return transition("hideout_sofa", "cooling_inner", "アジトのソファ", "hideout sofa, cooling inner suit, exhausted")
-        if "ステーション制服" in text or "ジャンプスーツ" in text:
-            return transition("space_station_cabin", "station_jumpsuit", "宇宙ステーションの船室", "space station cabin, zero gravity, jumpsuit uniform")
-        if "エアロック" in text:
-            return transition("space_station_airlock", "station_jumpsuit", "宇宙ステーションのエアロック", "space station airlock, earth through window, jumpsuit uniform")
-        if "メディカルルーム" in text or "医療用ガウン" in text:
-            return transition("medical_room", "medical_gown", "メディカルルーム", "medical room, diagnostic pod, blue medical gown")
-        if "宇宙服" in text or "バイザースーツ" in text:
-            return transition("space_station_exterior", "space_suit", "宇宙空間のステーション外壁", "outer space, space station exterior, EVA space suit, visor helmet")
-        if "格納庫" in text or "ハンガー" in text:
-            return transition("space_station_hangar", "space_suit", "ステーションの格納庫", "space station hangar, EVA space suit")
-        if "バーチャルバトルアリーナ" in text:
-            return transition("vr_battle_arena", "cyborg_armor", "VRバトルアリーナ", "VR battle arena, silver cyborg armor")
-        if "溶岩" in text or "マグマ" in text:
-            return transition("vr_lava_stage", "cyborg_armor", "VR溶岩ステージ", "VR lava stage, magma, silver cyborg armor")
-        if "白いエラー空間" in text or "白タイツ" in text or "アンダースーツ" in text:
-            return transition("vr_white_error_space", "white_bodysuit", "VR白いエラー空間", "white void, error space, plain white bodysuit")
-        if "ヘッドセットを外して" in text or "現実世界に帰って" in text:
-            return transition("home_room", "tshirt_shorts", "自宅の自室へ戻る", "home bedroom, VR headset removed, t-shirt, shorts")
-        if "作業用ツナギ" in text or "清掃員" in text:
-            return transition("building_lobby", "work_coveralls", "ビルのロビー", "office building lobby, mop, work coveralls")
-        if "最上階" in text and "廊下" in text:
-            return transition("executive_floor_corridor", "work_coveralls", "最上階の廊下", "executive floor corridor, security camera, work coveralls")
-        if "タキシード" in text and ("パーティー" in text or "変装" in text):
-            return transition("charity_party_hall", "tuxedo", "社交パーティー会場", "charity party hall, evening tuxedo")
-        if "会長の書斎" in text:
-            return transition("chairman_study", "tuxedo", "会長の書斎", "chairman's study, computer, evening tuxedo")
-        if "ライダース" in text or "バイク" in text and "高速" in text:
-            return transition("highway_motorcycle", "tuxedo_riders", "高速道路のバイク上", "highway motorcycle, leather rider jacket over tuxedo")
-
-        # Sports / fitness testcase rules.
-        if "ジムのロッカー" in text:
-            return transition("gym_locker_room", "casual_hoodie_jeans", "ジムのロッカールーム", "gym locker room, hoodie, jeans")
-        if "マシンエリア" in text or "トレッドミル" in text:
-            return transition("fitness_machine_area", "training_wear", "フィットネスマシンエリア", "fitness gym machine area, treadmill, training wear")
-        if "エアロビクス" in text or "スタジオへ移動" in text and "レッスン" in text:
-            return transition("aerobics_studio", "training_wear", "スタジオ内のレッスン", "fitness studio, aerobics lesson, training wear")
-        if "スイムゴーグル" in text or "温水プール" in text:
-            return transition("indoor_warm_pool", "swim_cap_goggles", "温水プール", "indoor heated pool, swim cap, goggles, swimsuit")
-        if "ロビーの自動販売機" in text or "プロテイン" in text:
-            return transition("gym_lobby", "casual_hoodie_jeans", "ジムのロビー", "gym lobby, vending machine, protein drink, hoodie, jeans")
-        if "アンダーシャツ" in text and "スパイク" in text:
-            return transition("baseball_locker_room", "baseball_undershirt", "球場のロッカールーム", "baseball locker room, undershirt, uniform pants, cleats")
-        if "キャッチボール" in text or "ウォーミングアップ" in text:
-            return transition("baseball_ground_practice", "baseball_uniform_full", "野球場のグラウンド", "baseball field, warmup, full baseball uniform")
-        if "ダグアウト" in text or "ベンチ" in text and "ヘルメット" in text:
-            return transition("baseball_dugout", "baseball_uniform_helmet", "球場のダグアウト", "baseball dugout, batting helmet, uniform")
-        if "バッターボックス" in text or "バットを構える" in text:
-            return transition("batters_box", "baseball_uniform_helmet", "バッターボックス", "batter's box, bat, batting helmet, baseball uniform")
-        if "お立ち台" in text or "ヒーローインタビュー" in text:
-            return transition("baseball_hero_interview_podium", "baseball_uniform_no_helmet", "グラウンド中央のお立ち台", "baseball hero interview podium, no helmet, uniform")
-        if "シングレット" in text or "ゼッケン" in text:
-            return transition("marathon_start_line", "running_singlet", "マラソン大会のスタート地点", "marathon start line, bib number, running singlet")
-        if "上り坂" in text or "走り出し" in text and "ランナー" in text:
-            return transition("marathon_uphill_course", "running_singlet", "マラソンコース上り坂", "marathon uphill road, runners, bib number")
-        if "給水所" in text or "ヘッドバンド" in text:
-            return transition("marathon_water_station", "running_no_headband", "コース沿いの給水所", "marathon water station, no headband, water cup")
-        if "ゴールテープ" in text or "直線トラック" in text:
-            return transition("stadium_finish_track", "running_no_headband", "競技場のトラック", "stadium running track, finish tape")
-        if "防寒ブランケット" in text or "完走メダル" in text:
-            return transition("stadium_grass_rest_area", "running_blanket_medal", "競技場内の芝生エリア", "stadium grass, thermal blanket, finisher medal")
-        if "ヨガスタジオの受付" in text:
-            return transition("yoga_studio_reception", "casual", "ヨガスタジオの受付", "yoga studio reception, casual clothes, herbal tea")
-        if "ヨガレギンス" in text or "ヨガマット" in text:
-            return transition("yoga_studio_start", "yoga_wear", "ヨガスタジオ内", "yoga studio, yoga mat, leggings, camisole")
-        if "木のポーズ" in text or "ゆっくり呼吸" in text:
-            return transition("yoga_studio_lesson", "yoga_wear", "ヨガレッスン中", "yoga studio lesson, tree pose, leggings, camisole")
-        if "シャワー室" in text and "バスタオル" in text:
-            return transition("shower_room", "towel", "シャワー室", "shower room, bath towel, wet hair")
-        if "オーガニックカフェ" in text or "ルイボスティー" in text:
-            return transition("organic_studio_cafe", "casual", "スタジオ併設のカフェ", "organic cafe, rooibos tea, casual clothes")
-
-        # Broad testcase-oriented context rules. These are intentionally
-        # checked before shorter generic triggers to avoid keyword collisions.
-        if "満員電車" in text:
-            return transition("crowded_train", "business_suit", "満員電車で出社中", "crowded_train, commuter_train, business_suit, necktie")
-        if "自分のデスク" in text or "メールをチェック" in text:
-            return transition("office_workspace", "business_suit", "オフィスの執務室に到着", "office_workspace, desk, computer, email, business")
-        if "社内プレゼン" in text or "プロジェクター" in text:
-            return transition("presentation_room", "business_shirt", "会議室でプレゼン準備", "meeting_room, projector, presentation, rolled_up_sleeves")
-        if "懇親会" in text:
-            return transition("hotel_banquet_hall", "business_jacketpants", "会社の懇親会へ移動", "banquet_hall, party, hotel, drinks")
-        if "カラオケ" in text:
-            return transition("karaoke_room", "business_jacketpants", "二次会のカラオケ", "karaoke_room, microphone, party_lighting, singing")
-        if "新幹線のホーム" in text:
-            return transition("shinkansen_platform", "business_jacketpants", "出張の新幹線ホーム", "shinkansen_platform, suitcase, early_morning")
-        if "新幹線が発車" in text or "座席のテーブル" in text:
-            return transition("shinkansen_interior", "business_jacketpants", "新幹線車内で作業", "shinkansen_interior, train_seat, laptop, documents")
-        if "ホテルにチェックイン" in text and "ブラックスーツ" in text:
-            return transition("hotel_room", "business_suit", "ホテルでブラックスーツに着替える", "hotel_room, suitcase, business_suit, necktie")
-        if "取引先" in text and "役員会議室" in text:
-            return transition("executive_boardroom", "business_suit", "取引先の役員会議室", "executive_boardroom, city_view, business_meeting")
-        if "ホテルに戻" in text and "パジャマ" in text:
-            return transition("hotel_room", "pajamas", "ホテルでパジャマに着替える", "hotel_room, bed, pajamas, night")
-        if "Web会議" in text or "上半身だけワイシャツ" in text:
-            return transition("home_study", "remote_business", "自宅書斎でリモート会議", "home_office, webcam, desk, business_shirt")
-        if "リビングのソファ" in text and "契約書" in text:
-            return transition("home_living_room", "remote_business", "リビングで契約書確認", "living_room, sofa, documents, coffee")
-        if "クライアント" in text and "カフェ" in text:
-            return transition("open_air_cafe", "smart_casual", "カフェでクライアント打ち合わせ", "open_air_cafe, documents, handbag, business_meeting")
-        if "郵便局" in text:
-            return transition("post_office_counter", "smart_casual", "郵便局で書類を投函", "post_office_counter, envelope, queue")
-        if "Tシャツ" in text and ("短パン" in text or "ハーフパンツ" in text):
-            loc = "home_living_room" if "リビング" in text or "帰宅" in text else "home_room"
-            return transition(loc, "tshirt_shorts", "帰宅後にTシャツと短パンへ着替え", "t-shirt, shorts, home, relaxed")
-        if "内定式" in text:
-            return transition("company_meeting_room", "recruit_suit", "内定式の本社会議室", "company_meeting_room, recruit_suit, ceremony")
-        if "社員食堂" in text:
-            return transition("company_cafeteria", "recruit_suit", "本社の社員食堂", "company_cafeteria, buffet, recruit_suit")
-        if "フットサル" in text:
-            return transition("futsal_court", "sportswear", "フットサルコートへ移動", "futsal_court, sportswear, ball, energetic")
-        if "BBQ" in text or "バーベキュー" in text:
-            return transition("bbq_area", "sportswear", "BBQエリア", "bbq_grill, outdoor, smoke, sportswear")
-        if "バル" in text or "洋風居酒屋" in text:
-            return transition("western_pub", "casual", "洋風居酒屋へ移動", "pub, bar_table, casual_clothes, drink")
-
-        if "特急列車" in text:
-            return transition("limited_express_train", "cardigan_casual", "海へ向かう特急列車内", "train_interior, window_ocean, light_cardigan")
-        if "駅を出たら" in text and "水着" in text:
-            return transition("sunny_beach", "swimsuit", "駅から砂浜へ出て水着に着替える", "beach, swimsuit, sunny, ocean")
-        if "かき氷" in text or "パラソル" in text:
-            return transition("beach_house", "swimsuit", "海の家で休憩", "beach_house, shaved_ice, parasol, swimsuit")
-        if "宿の浴衣" in text or ("旅館" in text and "浴衣" in text):
-            return transition("onsen_inn_room", "yukata", "温泉旅館の客室で浴衣", "inn_room, tatami, yukata, dinner")
-        if "ゲームコーナー" in text:
-            return transition("retro_game_corner", "yukata", "旅館のゲームコーナー", "retro_game_center, arcade_cabinets, yukata")
-        if "ゲレンデ" in text:
-            return transition("ski_slope", "ski_wear", "スキー場のゲレンデ", "ski_slope, powder_snow, ski_wear, mountain")
-        if "ロッジ" in text and "ココア" in text:
-            return transition("ski_lodge", "ski_wear", "スキー場のロッジ", "ski_lodge, hot_cocoa, fireplace, ski_wear")
-        if "スキーウェアを脱" in text or "スウェットにチェンジ" in text:
-            return transition("hotel_room", "sweatshirt", "ホテル客室でスウェットへ着替える", "hotel_room, sweatshirt, warm_room")
-        if "フォーマルなドレス" in text or "ドレスコード" in text:
-            return transition("hotel_restaurant", "formal_dress", "ホテルレストランでフォーマルドレス", "hotel_restaurant, formal_dress, dinner")
-        if "最上階のバー" in text:
-            return transition("hotel_bar", "formal_dress", "ホテル最上階のバー", "hotel_bar, formal_dress, cocktail")
-        if "休日の朝" in text or "モコモコパジャマ" in text:
-            return transition("home_living_room", "pajamas", "休日朝のリビング", "living_room, pajamas, coffee, morning")
-        if "トレンチコート" in text:
-            return transition("neighborhood_park", "trench_coat", "雨上がりの公園散歩", "park, trench_coat, wet_ground")
-        if "ブックカフェ" in text:
-            return transition("book_cafe", "trench_coat", "雨宿りのブックカフェ", "book_cafe, bookshelves, trench_coat, rain")
-        if "シャワー" in text and ("Tシャツ" in text or "ハーフパンツ" in text):
-            return transition("home_room", "tshirt_shorts", "シャワー後の部屋着", "bedroom, t-shirt, shorts, fresh")
-        if "ボイスチャット" in text and "オンラインゲーム" in text:
-            return transition("home_pc_desk", "tshirt_shorts", "PCデスク前でオンラインゲーム", "pc_desk, headset, monitor, t-shirt")
-        if "ドラキュラ" in text:
-            return transition("home_room", "dracula_costume", "ハロウィン衣装", "dracula_costume, halloween, home_room")
-        if "クラブ" in text and "パーティー" in text:
-            return transition("halloween_club", "dracula_costume", "クラブのハロウィンパーティー", "club, halloween, neon_lights, dracula_costume")
-        if "実家" in text and ("スウェット" in text or "寝室" in text):
-            clothing = "dotera" if "ドテラ" in text else "sweatshirt"
-            return transition("parents_home_bedroom", clothing, "実家の自室", "bedroom, parents_home, loungewear")
-        if "実家の居間" in text or "朝食" in text:
-            return transition("parents_home_living_room", "dotera", "実家の居間", "living_room, breakfast, kotatsu, dotera")
-
-        if "更衣室" in text and ("ジャージ" in text or "体操服" in text):
-            return transition("school_locker_room", "jersey", "部活前にジャージへ着替える", "school_locker_room, jersey, lockers")
-        if "グラウンド" in text or "ランニング" in text:
-            return transition("school_ground", "jersey", "学校グラウンドで部活", "school_ground, running, jersey")
-        if "部室" in text:
-            return transition("club_room", "school_uniform", "部室で制服に着替える", "club_room, school_uniform, after_practice")
-        if "駅前の噴水" in text:
-            return transition("station_plaza", "long_coat", "駅前広場で待ち合わせ", "station_plaza, fountain, long_coat")
-        if "映画館" in text:
-            return transition("cinema_lobby" if "ロビー" in text or "上映" in text else "movie_theater", "long_coat", "映画館", "cinema, popcorn, long_coat")
-        if "コートを脱" in text and "カフェ" in text:
-            return transition("cafe_inside", "sweater", "カフェでコートを脱ぐ", "cafe, sweater, tea")
-        if "イルミネーション" in text:
-            return transition("illumination_street", "long_coat", "イルミネーションの並木道", "illumination_street, long_coat, night")
-        if "改札" in text:
-            return transition("station_gate", None, "駅の改札口", "station_gate, ticket_gate, farewell")
-        if "図書館" in text or "自習室" in text:
-            return transition("library_study_room", "hoodie", "図書館の自習室", "library, study_room, hoodie")
-        if "ファミリーレストラン" in text or "ファミレス" in text:
-            return transition("family_restaurant", "hoodie", "ファミリーレストラン", "family_restaurant, menu, hoodie")
-        if "フリース" in text:
-            return transition("home_room", "dotera", "部屋でフリースを羽織る", "bedroom, fleece, sweatshirt")
-        if "夜食" in text or "うどん" in text:
-            return transition("home_living_room", "dotera", "リビングで夜食", "living_room, udon, loungewear")
-        if "レインコート" in text and "制服" in text:
-            return transition("home_entrance" if "出発" in text else None, "raincoat_uniform", "制服の上にレインコート", "raincoat, school_uniform, umbrella")
-        if "バス" in text:
-            return transition("route_bus", "raincoat_uniform", "路線バス車内", "bus_interior, raincoat, rainy_window")
-        if "レインコートは脱" in text:
-            return transition("route_bus", "school_uniform", "バス車内でレインコートを脱ぐ", "bus_interior, school_uniform, folded_raincoat")
-
-        if "冒険者ギルド" in text or "依頼" in text and "ギルド" in text:
-            return transition("adventurers_guild", "leather_armor", "冒険者ギルド", "adventurers_guild, notice_board, leather_armor")
-        if "洞窟" in text and "入り口" in text:
-            return transition("cave_entrance", "leather_armor", "洞窟の入り口", "cave_entrance, torch, leather_armor")
-        if "水没" in text or "チェインメイル" in text:
-            return transition("flooded_cave_depths", "chainmail", "洞窟深部でチェインメイル", "flooded_cave, chainmail, dripping_water")
-        if "ドラゴン" in text or "ボス戦" in text:
-            return transition("dragon_throne", "chainmail", "ドラゴンの玉座", "dragon_throne, boss_battle, chainmail")
-        if "旅籠" in text or "宿屋" in text:
-            return transition("inn_room", "inn_gown", "宿屋の客室", "inn_room, bed, gown, warm_lighting")
-        if "王都" in text and "広場" in text:
-            return transition("royal_capital_square", "traveler_cloak", "王都の広場", "city_square, cloak, boots")
-        if "王城の門" in text or "門前" in text:
-            return transition("castle_gate", "traveler_cloak", "王城の門前", "castle_gate, cloak, boots")
-        if "謁見" in text or "宮廷礼服" in text:
-            return transition("throne_room", "court_dress", "王城の謁見の間", "throne_room, court_dress, royal")
-        if "バルコニー" in text:
-            return transition("castle_balcony", "court_dress", "王城のバルコニー", "castle_balcony, night_sky, court_dress")
-        if "酒場" in text:
-            return transition("tavern", "traveler_cloak", "賑やかな酒場", "tavern, mug, wooden_table")
-        if "魔法学校" in text and "時計塔" in text:
-            return transition("magic_academy_clocktower", "mage_uniform", "魔法学校の時計塔前", "magic_academy, clocktower, mage_uniform")
-        if "大講堂" in text:
-            return transition("magic_grand_hall", "mage_uniform", "魔法学校の大講堂", "grand_hall, magic_school, mage_uniform")
-        if "魔法薬" in text or "調合室" in text:
-            return transition("alchemy_lab", "protective_robe", "魔法薬の調合室", "alchemy_lab, potion, protective_robe")
-        if "中庭" in text or "温室" in text:
-            return transition("magic_school_courtyard", "protective_robe", "魔法学校の中庭", "courtyard, greenhouse, protective_robe")
-        if "学生寮" in text or "談話室" in text:
-            return transition("dorm_common_room", "dorm_loungewear", "学生寮の談話室", "dorm_common_room, fireplace, loungewear")
-        if "砂漠の入り口" in text:
-            return transition("desert_entrance", "desert_cloak", "砂漠の入り口", "desert, cloak, turban")
-        if "オアシス" in text and "水辺" not in text:
-            return transition("desert_oasis", "desert_cloak", "砂漠のオアシス", "oasis, palm_trees, desert_cloak")
-        if "水辺" in text and "オアシス" in text:
-            return transition("oasis_waterfront", "linen_underwear", "オアシスの水辺", "oasis_water, linen_underwear, palm_trees")
-        if "古代遺跡" in text or "遺跡群" in text:
-            return transition("ancient_ruins", "linen_underwear", "古代遺跡", "ancient_ruins, desert, linen_underwear")
-        if "焚き火" in text:
-            return transition("ruins_campfire", "wool_cloak", "遺跡内部の焚き火前", "campfire, ancient_ruins_interior, wool_cloak")
-
-        if "遊園地" in text or "入場ゲート" in text:
-            return transition("amusement_park_gate", "sneakers_casual", "遊園地の入場ゲート", "amusement_park_gate, sneakers, sunny")
-        if "ジェットコースター" in text:
-            return transition("roller_coaster_queue", "sneakers_casual", "ジェットコースター待機列", "roller_coaster, queue, sneakers")
-        if "テーマレストラン" in text or "カチューシャ" in text:
-            return transition("theme_restaurant", "character_headband", "園内テーマレストラン", "theme_restaurant, character_headband, food")
-        if "パレード" in text:
-            return transition("parade_route", "character_headband", "パレードルート沿道", "parade_route, floats, character_headband")
-        if "和食レストラン" in text:
-            return transition("japanese_restaurant", "sneakers_casual", "駅ビルの和食レストラン", "japanese_restaurant, dinner")
-        if "物販" in text or "ライブ会場外" in text:
-            return transition("concert_merch_area", "live_tshirt", "ライブ会場外の物販エリア", "concert_merch, live_tshirt, crowd")
-        if "スタンディングエリア" in text and "ライブ中" not in text:
-            return transition("live_house_standing", "live_tshirt", "ライブハウスのスタンディングエリア", "live_house, stage_lights, live_tshirt")
-        if "ライブ中" in text or "ラバーバンド" in text:
-            return transition("live_house_performance", "live_tshirt_band", "ライブ中", "live_house, stage_lights, rubber_wristband, ponytail")
-        if "夜風" in text:
-            return transition("concert_venue_outside_night", "live_tshirt_band", "ライブ会場外の夜風", "concert_outside, night_wind, live_tshirt")
-        if "居酒屋" in text and "ライブ" in text:
-            return transition("izakaya_private_room", "live_tshirt_hoodie", "ライブ後の居酒屋個室", "izakaya, private_room, hoodie")
-        if "美術館" in text and "ロビー" in text:
-            return transition("art_museum_lobby", "chic_coat_beret", "美術館のロビー", "art_museum_lobby, beret, chester_coat")
-        if "展示室" in text:
-            return transition("art_gallery_room", "chic_coat_beret", "美術館の展示室", "art_gallery, painting, beret")
-        if "カフェテラス" in text:
-            return transition("museum_cafe_terrace", "sweater", "美術館のカフェテラス", "cafe_terrace, sweater, museum")
-        if "ミュージアムショップ" in text:
-            return transition("museum_shop", "sweater", "ミュージアムショップ", "museum_shop, postcards, sweater")
-        if "読書スペース" in text or "メガネ" in text:
-            return transition("library_reading_space", "sweater_glasses", "図書館の読書スペース", "library, reading_space, glasses")
-        if "ショッピングモール" in text and "案内板" in text:
-            return transition("shopping_mall_map", "sneakers_casual", "ショッピングモール案内板前", "shopping_mall, map, jeans, sneakers")
-        if "アパレルショップ" in text:
-            return transition("apparel_shop", "sneakers_casual", "アパレルショップ店内", "apparel_shop, clothes_rack, jeans")
-        if "試着室" in text or "ワンピース" in text and "購入" not in text:
-            return transition("fitting_room", "one_piece", "試着室でワンピース", "fitting_room, mirror, one-piece dress")
-        if "フードコート" in text:
-            return transition("food_court", "sneakers_casual", "モールのフードコート", "food_court, crowded, casual")
-        if "シアター" in text:
-            return transition("movie_theater", "one_piece", "映画館シアター内", "movie_theater, cinema_seat, one-piece dress")
-
-        if "桜" in text or "お花見" in text:
-            if "屋台" in text:
-                return transition("sakura_food_stalls", "sweater", "屋台が立ち並ぶ通り", "sakura, food_stalls, spring")
-            if "甘酒" in text:
-                return transition("amazake_tea_house", "spring_coat", "甘酒茶屋", "tea_house, amazake, spring_coat")
-            if "夜桜" in text or "ライトアップ" in text:
-                return transition("illuminated_sakura_path", "spring_coat", "夜桜並木", "night_sakura, illuminated, spring_coat")
-            return transition("sakura_park", "spring_coat", "満開の桜の公園", "cherry_blossoms, park, spring_coat")
-        if "市民プール" in text or "プールの入場" in text:
-            return transition("pool_gate", "tshirt_shorts", "市民プール入場ゲート", "pool_gate, summer, t-shirt, shorts")
-        if "プールの更衣室" in text:
-            return transition("pool_locker_room", "swimsuit", "プールの更衣室", "locker_room, swimsuit")
-        if "流れるプール" in text:
-            return transition("lazy_river_pool", "swimsuit", "流れるプール", "pool_water, lazy_river, swimsuit")
-        if "ラッシュガード" in text:
-            loc = "pool_parasol_bench" if "パラソル" in text else "poolside_stand"
-            return transition(loc, "rash_guard", "プールサイド", "poolside, rash_guard, swimsuit")
-        if "登山口" in text:
-            return transition("mountain_trailhead", "hiking_wear", "山の登山口", "mountain_trailhead, trekking_wear, autumn")
-        if "展望台" in text:
-            return transition("mountain_observatory", "hiking_wear", "山の展望台", "mountain_view, autumn_leaves, trekking_wear")
-        if "山頂" in text:
-            return transition("mountain_peak", "mountain_parka", "山頂", "mountain_peak, strong_wind, mountain_parka")
-        if "吊り橋" in text:
-            return transition("mountain_suspension_bridge", "mountain_parka", "山の吊り橋", "suspension_bridge, mountain_parka")
-        if "温泉施設" in text or "作務衣" in text:
-            return transition("onsen_lobby", "samue", "温泉施設のロビー", "onsen_lobby, samue, warm_lighting")
-        if "鳥居" in text:
-            return transition("shrine_torii", "down_scarf_gloves", "神社の鳥居前", "shrine_torii, snow, down_jacket")
-        if "拝殿" in text:
-            return transition("shrine_main_hall", "down_scarf_gloves", "神社の拝殿前", "shrine_main_hall, snow, down_jacket")
-        if "お神酒" in text or "甘酒配布" in text:
-            return transition("shrine_amazake_stand", "down_jacket", "境内の甘酒配布所", "shrine, amazake_stand, down_jacket")
-        if "お札" in text or "おみくじ" in text:
-            return transition("shrine_omikuji_counter", "down_jacket", "おみくじ授与所", "shrine, omikuji, down_jacket")
-        if "ファミリーレストラン" in text and "深夜" in text:
-            return transition("late_night_family_restaurant", "winter_indoor", "深夜のファミリーレストラン", "family_restaurant, midnight, sweater")
-
-        # School date flow
-        if "授業" in text and ("終わ" in text or "帰ろ" in text):
-            return transition(
-                "classroom_after_school",
-                "school_uniform",
-                "授業後の学校文脈を初期シーンとして確定",
-                "classroom, after_school, school_desk, school_bag, afternoon",
-            )
-        if "上着" in text and ("脱" in text or "暑" in text):
-            return transition(
-                "school_route_evening",
-                "shirt_uniform",
-                "暑さで制服の上着を脱ぐ流れ",
-                "school_route, evening, walking_home, sunset",
-            )
-        if "カフェ" in text and ("宿題" in text or "行" in text or "いかない" in text):
-            return transition(
-                "stylish_cafe",
-                None,
-                "カフェで宿題をする提案",
-                "stylish_cafe, cafe_table, homework, notebook, drink",
-            )
-        if "駅" in text and ("送" in text or "暗" in text):
-            return transition(
-                "station_front_night",
-                "school_uniform",
-                "夜に駅まで送る流れ",
-                "station_front, night, street_lights, city_street",
-            )
-        if "また明日学校" in text or "明日学校" in text:
-            return transition(
-                "station_gate",
-                "school_uniform",
-                "別れ際の駅改札前",
-                "station_gate, ticket_gate, night_lighting, farewell",
-            )
-
-        # Online game to home visit flow
-        if any(word in text for word in ("ディスコード", "ネトゲ", "レイド")):
-            return transition(
-                "own_room_pc",
-                "roomwear",
-                "オンラインゲームのため自室PC前へ",
-                "bedroom_pc, gaming_pc, monitor, desk, evening_room",
-            )
-        if any(word in text for word in ("VC", "マイク")):
-            return transition(
-                "own_room_closeup",
-                "headset",
-                "ボイスチャット中にマイクへ近づく",
-                "close_up, headset, microphone, gaming_chair, monitor_light",
-            )
-        if "家の近く" in text or "突撃" in text or "お土産" in text:
-            return transition(
-                "own_room",
-                "roomwear",
-                "急な訪問予告で自室にいる状態",
-                "bedroom, surprised, flustered, roomwear, phone",
-            )
-        if "ピンポーン" in text or "開けて" in text:
-            return transition(
-                "entrance",
-                "roomwear",
-                "玄関で来客に応対する",
-                "entrance, front_door, indoor_lighting, flustered",
-            )
-        if "部屋入る" in text or "エアコン" in text:
-            return transition(
-                "own_room_with_user",
-                "roomwear",
-                "ユーザーが部屋に入った状態",
-                "bedroom, air_conditioner, user_present, embarrassed",
-            )
-
-        # Summer beach to fireworks flow
-        if "海に到着" in text or "砂浜" in text:
-            return transition(
-                "sunny_beach",
-                "summer_dress",
-                "夏の砂浜に到着",
-                "beach, sunny, ocean, sand, summer",
-            )
-        if "水着" in text or "泳ぐ準備" in text:
-            return transition(
-                "beach_shore",
-                "swimsuit",
-                "泳ぐため水着へ着替える",
-                "beach_shore, ocean, swimsuit, sunny, waves",
-            )
-        if "海の家" in text or "焼きそば" in text:
-            return transition(
-                "beach_house",
-                "swim_coverup",
-                "泳いだ後に海の家で休憩",
-                "beach_house, shade, yakisoba, table, summer",
-            )
-        if "夏祭り" in text or "祭り" in text:
-            return transition(
-                "festival_shrine_evening",
-                "yukata",
-                "夕方の夏祭りへ移動",
-                "festival_shrine, evening, food_stalls, lanterns",
-            )
-        if "花火" in text:
-            return transition(
-                "fireworks_hill_night",
-                "yukata",
-                "夜の高台で花火を見る",
-                "fireworks, hill, night_sky, yukata, fireworks_lighting",
-            )
-
-        # Office to bar flow
-        if "資料" in text or "チェック" in text:
-            return transition(
-                "office_day",
-                "office_jacket",
-                "昼のオフィスで資料確認",
-                "office, desk, documents, daytime, business",
-            )
-        if "定時" in text or "プレゼン" in text:
-            return transition(
-                "office_night",
-                "office_casual",
-                "定時後のオフィス",
-                "office, night, desk, tired_smile, loosened",
-            )
-        if "バー" in text or "一杯" in text:
-            return transition(
-                "stylish_bar",
-                "office_no_jacket",
-                "仕事後にバーへ移動",
-                "stylish_bar, dim_lighting, bar_counter, drink",
-            )
-        if "眼鏡外" in text or "メガネ外" in text:
-            return transition(
-                "bar_counter",
-                "no_glasses",
-                "バーで眼鏡を外した状態",
-                "bar_counter, no_eyewear, dim_lighting, relaxed",
-            )
-        if "酔" in text or "お水" in text:
-            return transition(
-                "stylish_bar",
-                "office_no_jacket",
-                "バーで少し酔って水を勧める場面",
-                "stylish_bar, drink, water_glass, blush, dim_lighting",
-            )
-
-        # Winter flow
-        if "暖房" in text or "汗" in text:
-            return transition(
-                "winter_cafe_inside",
-                "winter_indoor",
-                "暖房の効いた冬のカフェ店内",
-                "winter_cafe, indoor, sweater, warm_lighting",
-            )
-        if "雪" in text and ("出よう" in text or "外" in text):
-            return transition(
-                "cafe_entrance_snow",
-                "winter_coat",
-                "雪の外へ出るためコートを着る",
-                "cafe_entrance, snow, winter_coat, doorway",
-            )
-        if "寒い" in text or "風" in text:
-            return transition(
-                "snowy_street",
-                "winter_coat",
-                "雪の街並みへ出た状態",
-                "snowy_street, strong_wind, snow, winter",
-            )
-        if "カイロ" in text:
-            return transition(
-                "snowy_street_closeup",
-                "coat_scarf",
-                "雪道でカイロを渡す場面",
-                "close_up, snowy_street, hand_warmer, scarf",
-            )
-        if "手袋" in text or "繋いで" in text:
-            return transition(
-                "illumination_street",
-                "coat_scarf_gloves",
-                "イルミネーションの道を手を繋いで歩く",
-                "illumination_street, winter_lights, gloves, walking_together",
-            )
-
         return None
+
+
+    def _infer_dynamic_scene_transition(self, user_input):
+        if not self.scene_state_config.get("dynamic_enabled", True):
+            return None
+        try:
+            _, raw = self._call_llm_with_retry(
+                self._state_inference_payload(user_input),
+                max_retries=1,
+                retry_delay=0,
+            )
+            candidate = normalize_dynamic_candidate(raw, self.current_state)
+        except Exception as exc:
+            print(f"[STATE] dynamic inference skipped: {exc}")
+            return None
+        if not candidate:
+            return None
+
+        threshold = float(self.scene_state_config.get("confidence_threshold", 0.72))
+        if candidate.get("location") and candidate.get("location_confidence", 0) >= threshold:
+            reg = candidate["registry"]["location"]
+            self.dynamic_registry.register(
+                "locations",
+                reg["key"],
+                reg.get("label_ja", ""),
+                reg.get("image_tags", ""),
+                reg.get("aliases", []),
+            )
+        else:
+            candidate["location"] = None
+            candidate["location_changed"] = False
+        if candidate.get("clothing") and candidate.get("clothing_confidence", 0) >= threshold:
+            reg = candidate["registry"]["clothing"]
+            self.dynamic_registry.register(
+                "clothing",
+                reg["key"],
+                reg.get("label_ja", ""),
+                reg.get("image_tags", ""),
+                reg.get("aliases", []),
+            )
+        else:
+            candidate["clothing"] = None
+            candidate["clothing_changed"] = False
+        if not candidate.get("location") and not candidate.get("clothing") and not candidate.get("tag_hint"):
+            return None
+        return candidate
+
+    def _registry_transition_candidate(self, user_input):
+        matches = self.dynamic_registry.match_text(user_input)
+        current_location = self.current_state.get("location", "")
+        current_clothing = self.current_state.get("clothing", "")
+        location = None
+        clothing = None
+        tags = []
+        if matches["locations"]:
+            _, location, item = matches["locations"][0]
+            tags.append(item.get("image_tags", ""))
+        if matches["clothing"]:
+            _, clothing, item = matches["clothing"][0]
+            tags.append(item.get("image_tags", ""))
+        if not location and not clothing:
+            return None
+        return {
+            "location": location if location != current_location else None,
+            "clothing": clothing if clothing != current_clothing else None,
+            "location_changed": bool(location and location != current_location),
+            "clothing_changed": bool(clothing and clothing != current_clothing),
+            "reason": "dynamic registry match",
+            "tag_hint": merge_prompt_tags(*tags),
+            "location_confidence": 0.92 if location else 0.0,
+            "clothing_confidence": 0.92 if clothing else 0.0,
+            "source": "registry",
+        }
+
+    def _is_generic_rule_candidate(self, candidate):
+        if not candidate:
+            return True
+        generic_locations = {
+            "castle_balcony", "amusement_park_gate", "parade_route", "movie_theater",
+            "fitting_room", "home_room", "kitchen", "route_bus", "station_gate",
+            "stylish_bar", "cafe_inside", "snowy_street", "illumination_street",
+            "cyberpunk_alleyway",
+        }
+        if candidate.get("location") in generic_locations:
+            return True
+        tag_hint = str(candidate.get("tag_hint", ""))
+        return len(tag_hint) < 20
+
+    def _needs_dynamic_inference(self, user_input, rule_candidate, registry_candidate):
+        if not self.scene_state_config.get("dynamic_enabled", True):
+            return False
+        if rule_candidate and not self._is_generic_rule_candidate(rule_candidate):
+            return False
+        if registry_candidate and not self._is_generic_rule_candidate(registry_candidate):
+            return False
+        text = str(user_input)
+        change_markers = (
+            "着替", "脱", "羽織", "かぶ", "被", "手袋", "マスク", "ヘルメット",
+            "ベール", "ポンチョ", "合羽", "エプロン", "コート", "パーカー",
+            "移動", "入って", "出て", "戻", "向か", "到着", "ロビー", "工房",
+            "ランドリー", "屋上", "プラネタリウム", "スタジオ",
+        )
+        return any(marker in text for marker in change_markers)
+
+    def _resolve_scene_transition(self, rule_candidate, dynamic_candidate):
+        if not rule_candidate:
+            return dynamic_candidate
+        if not dynamic_candidate:
+            rule_candidate["source"] = rule_candidate.get("source", "rule")
+            return rule_candidate
+
+        generic_locations = {
+            "castle_balcony", "amusement_park_gate", "parade_route", "movie_theater",
+            "fitting_room", "home_room", "kitchen", "route_bus", "station_gate",
+            "stylish_bar", "cafe_inside", "snowy_street", "illumination_street",
+        }
+        high_dynamic = (
+            dynamic_candidate.get("location_confidence", 0) >= 0.88
+            or dynamic_candidate.get("clothing_confidence", 0) >= 0.88
+        )
+        rule_location = rule_candidate.get("location")
+        if high_dynamic and (rule_location in generic_locations):
+            return dynamic_candidate
+
+        merged = dict(rule_candidate)
+        merged["source"] = "rule+dynamic"
+        if (
+            rule_location in generic_locations
+            and dynamic_candidate
+            and not dynamic_candidate.get("location")
+            and dynamic_candidate.get("clothing_confidence", 0) >= 0.85
+        ):
+            merged["location"] = None
+            merged["location_changed"] = False
+        if not merged.get("location") and dynamic_candidate.get("location"):
+            merged["location"] = dynamic_candidate["location"]
+            merged["location_changed"] = dynamic_candidate["location_changed"]
+        if not merged.get("clothing") and dynamic_candidate.get("clothing"):
+            merged["clothing"] = dynamic_candidate["clothing"]
+            merged["clothing_changed"] = dynamic_candidate["clothing_changed"]
+        if dynamic_candidate.get("tag_hint"):
+            merged["tag_hint"] = merge_prompt_tags(
+                merged.get("tag_hint", ""), dynamic_candidate["tag_hint"]
+            )
+        merged["location_confidence"] = dynamic_candidate.get("location_confidence", 0)
+        merged["clothing_confidence"] = dynamic_candidate.get("clothing_confidence", 0)
+        if not merged.get("reason"):
+            merged["reason"] = dynamic_candidate.get("reason", "")
+        return merged
 
     def _coerce_bool(self, value):
         if isinstance(value, bool):
@@ -1484,7 +905,17 @@ class ChatEngine:
         clothing_override = self._infer_explicit_clothing_state(
             user_input_text
         )
-        explicit_transition = self._infer_explicit_scene_transition(user_input_text)
+        rule_transition = self._infer_explicit_scene_transition(user_input_text)
+        registry_transition = self._registry_transition_candidate(user_input_text)
+        dynamic_transition = None
+        if self._needs_dynamic_inference(
+            user_input_text, rule_transition, registry_transition
+        ):
+            dynamic_transition = self._infer_dynamic_scene_transition(user_input_text)
+        explicit_transition = self._resolve_scene_transition(
+            self._resolve_scene_transition(rule_transition, registry_transition),
+            dynamic_transition,
+        )
 
         last_scene_description = "特になし"
         if self.history:

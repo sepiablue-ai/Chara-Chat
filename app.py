@@ -254,7 +254,17 @@ def chat(user_msg, turns, enable_image, enable_voice):
         init_engine()
 
     turns = turns + [{"role": "user", "text": user_msg}]
-    character_turn_added = False
+    turns = turns + [{
+        "role": "character",
+        "text": "応答を生成しています...",
+        "image_path": None,
+        "voice_path": None,
+        "media_pending": True,
+    }]
+    character_turn_added = True
+
+    # Show the submitted message immediately; LLM inference can take a few seconds.
+    yield "", turns, render_html(turns)
 
     try:
         for result in engine.process_chat_turn_stream(

@@ -37,6 +37,7 @@ echo.
 
 :: --- [1] Ollama ---
 echo [1/4] Checking Ollama...
+set "OLLAMA_VULKAN="
 where ollama > nul 2>&1
 if errorlevel 1 (
     echo       [Error] ollama command was not found in PATH.
@@ -59,6 +60,13 @@ if errorlevel 1 (
     echo       Run: ollama pull %OLLAMA_MODEL%
     pause
     exit /b 1
+)
+set "OLLAMA_CUDA_DLL=%LOCALAPPDATA%\Programs\Ollama\lib\ollama\cuda_v12\ggml-cuda.dll"
+where nvidia-smi > nul 2>&1
+if not errorlevel 1 if not exist "%OLLAMA_CUDA_DLL%" (
+    echo       [WARN] Ollama CUDA backend is missing: %OLLAMA_CUDA_DLL%
+    echo              Ollama will run on CPU and the first reply may take several minutes.
+    echo              Repair or reinstall Ollama before using Chara-Chat.
 )
 echo       http://localhost:11434
 echo.

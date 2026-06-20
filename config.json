@@ -4,7 +4,8 @@
     "api_mode": "ollama",
     "model": "gemma4:12b-it-qat",
     "max_tokens": 4096,
-    "temperature": 0.8
+    "temperature": 0.8,
+    "request_timeout": 120
   },
   "comfyui": {
     "url": "http://127.0.0.1:8188",
@@ -25,6 +26,11 @@
     "memory_recall_only": true,
     "memory_max_events": 8,
     "memory_max_chars": 700
+  },
+  "scene_state": {
+    "dynamic_enabled": true,
+    "registry_path": "scene_state/dynamic_registry.json",
+    "confidence_threshold": 0.72
   },
   "streamlit": {
     "port": 8501

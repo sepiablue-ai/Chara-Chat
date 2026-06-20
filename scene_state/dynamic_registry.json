@@ -1,0 +1,1780 @@
+{
+  "locations": {
+    "airport_departure_lobby": {
+      "label_ja": "空港の出発ロビー",
+      "image_tags": "airport terminal, departure lobby, large windows, travelers in background, luggage carts",
+      "aliases": [
+        "空港",
+        "ロビー",
+        "空港ロビー",
+        "出発ゲート"
+      ]
+    },
+    "airplane_cabin": {
+      "label_ja": "機内",
+      "image_tags": "airplane cabin, airplane seat, window seat, airplane interior, passenger view",
+      "aliases": [
+        "飛行機の中",
+        "機内",
+        "plane",
+        "flight"
+      ]
+    },
+    "tropical_airport_exterior": {
+      "label_ja": "南国の空港",
+      "image_tags": "tropical airport exterior, palm trees, humid atmosphere, bright sunlight, tropical scenery",
+      "aliases": [
+        "tropical airport",
+        "arrival gate"
+      ]
+    },
+    "resort_hotel_lobby": {
+      "label_ja": "リゾートホテルのロビー",
+      "image_tags": "resort hotel lobby, high ceiling, tropical plants, welcome drink, ocean breeze",
+      "aliases": [
+        "hotel lobby",
+        "resort entrance"
+      ]
+    },
+    "resort_hotel_room": {
+      "label_ja": "リゾートホテルの客室",
+      "image_tags": "resort hotel room interior, balcony with ocean view, sunset lighting, cozy sofa, tropical decor",
+      "aliases": [
+        "hotel room",
+        "guest room",
+        "inn"
+      ]
+    },
+    "small_planetarium_in_residential_area": {
+      "label_ja": "住宅街の小さなプラネタリウム",
+      "image_tags": "small planetarium interior, residential area atmosphere, reclining seats, starry ceiling projection, cozy dim lighting",
+      "aliases": [
+        "住宅街のプラネタリウム",
+        "小さなプラネタリウム"
+      ]
+    },
+    "coin_laundry": {
+      "label_ja": "コインランドリー",
+      "image_tags": "coin laundry interior, washing machines, dryers, fluorescent lighting, late night atmosphere, industrial vibe, blue sign",
+      "aliases": [
+        "コインランドリー",
+        "laundromat",
+        "laundry"
+      ]
+    },
+    "pottery_workshop": {
+      "label_ja": "陶芸工房",
+      "image_tags": "pottery workshop, pottery wheel, clay studio, rustic interior, earthy tones, shelves with ceramics",
+      "aliases": [
+        "陶芸工房",
+        "pottery studio",
+        "工房",
+        "作業場",
+        "pottery workshop"
+      ]
+    },
+    "rooftop_of_neighboring_building": {
+      "label_ja": "隣のビルの屋上",
+      "image_tags": "rooftop, neighboring building view, urban scenery, outdoor, bright daylight, beehives, bees",
+      "aliases": [
+        "屋上",
+        "ビルの屋上",
+        "rooftop"
+      ]
+    },
+    "planetarium_lobby": {
+      "label_ja": "プラネタリウムのロビー",
+      "image_tags": "planetarium lobby, merchandise shelves, constellation goods, dim lighting, transition from dark room to slightly brighter area",
+      "aliases": [
+        "ロビー",
+        "グッズ棚"
+      ]
+    },
+    "coin_laundry_exterior": {
+      "label_ja": "コインランドリーの外",
+      "image_tags": "outside coin laundry, night, rainy atmosphere, dim street lights, wet pavement, blue neon sign, urban street",
+      "aliases": [
+        "コインランドリーの外",
+        "外の道",
+        "outside the laundry",
+        "street outside",
+        "outside coin laundry",
+        "street outside laundry"
+      ]
+    },
+    "crowded_train_interior": {
+      "label_ja": "満員電車",
+      "image_tags": "crowded train interior, commuters, packed subway car, urban atmosphere, morning light",
+      "aliases": [
+        "満員電車",
+        "通勤電車"
+      ]
+    },
+    "office_desk": {
+      "label_ja": "オフィス",
+      "image_tags": "office interior, desk, computer monitor, office chair, indoor lighting, corporate environment",
+      "aliases": [
+        "workplace",
+        "cubicle",
+        "boardroom",
+        "meeting room",
+        "company office"
+      ]
+    },
+    "karaoke_box": {
+      "label_ja": "カラオケボックス",
+      "image_tags": "karaoke room, neon lights, microphones, karaoke machine, private booth, dimly lit interior, colorful decorations",
+      "aliases": [
+        "カラオケ",
+        "二次会"
+      ]
+    },
+    "shinkansen_platform": {
+      "label_ja": "新幹線のホーム",
+      "image_tags": "shinkansen platform, train tracks, early morning light, cold atmosphere, station signage, waiting passengers",
+      "aliases": [
+        "bullet train station",
+        "train platform"
+      ]
+    },
+    "shinkansen_interior": {
+      "label_ja": "新幹線の車内",
+      "image_tags": "shinkansen interior, train seat, fold-out table, laptop on table, window view of passing scenery, interior lighting",
+      "aliases": [
+        "bullet train cabin",
+        "bullet train",
+        "express train"
+      ]
+    },
+    "home_study_room": {
+      "label_ja": "自宅の書斎",
+      "image_tags": "home study room, desk, computer monitor, office chair, indoor lighting, cozy atmosphere",
+      "aliases": [
+        "書斎",
+        "study",
+        "home living room",
+        "house",
+        "apartment",
+        "PC room",
+        "gaming room"
+      ]
+    },
+    "neighborhood_cafe": {
+      "label_ja": "近所のカフェ",
+      "image_tags": "cafe interior, cozy atmosphere, coffee shop, wooden tables, warm lighting, window view of street",
+      "aliases": [
+        "coffee shop",
+        "cafe",
+        "ブックカフェ",
+        "本屋カフェ"
+      ]
+    },
+    "post_office_counter": {
+      "label_ja": "郵便局の窓口",
+      "image_tags": "post office interior, mail counter, postal workers, mail slots, stamps, official atmosphere",
+      "aliases": [
+        "郵便局",
+        "postal window"
+      ]
+    },
+    "company_cafeteria": {
+      "label_ja": "社員食堂",
+      "image_tags": "company cafeteria, dining hall, long tables, food counters, indoor lighting, corporate atmosphere, people eating in background",
+      "aliases": [
+        "employee cafeteria",
+        "staff canteen"
+      ]
+    },
+    "company_locker_room": {
+      "label_ja": "更衣室",
+      "image_tags": "changing room, lockers, benches, sports equipment, indoor lighting",
+      "aliases": [
+        "dressing room",
+        "更衣室",
+        "locker room"
+      ]
+    },
+    "bbq_area": {
+      "label_ja": "BBQエリア",
+      "image_tags": "outdoor bbq area, grill with meat, smoke from charcoal, picnic tables, beer bottles, evening atmosphere",
+      "aliases": [
+        "BBQエリア",
+        "バーベキュー場"
+      ]
+    },
+    "stylish_bar": {
+      "label_ja": "おしゃれなバル",
+      "image_tags": "stylish bar interior, dim lighting, sophisticated atmosphere, wine glasses, wooden counter, urban chic",
+      "aliases": [
+        "bar",
+        "lounge",
+        "おしゃれなバル",
+        "バー"
+      ]
+    },
+    "beach": {
+      "label_ja": "ビーチ",
+      "image_tags": "sandy beach, ocean waves, bright sunlight, tropical atmosphere",
+      "aliases": [
+        "sea side",
+        "shore"
+      ]
+    },
+    "beach_shack": {
+      "label_ja": "海の家",
+      "image_tags": "beach shack, seaside stall, parasols, shaved ice stand, ocean background, tropical atmosphere",
+      "aliases": [
+        "海の家",
+        "beach house"
+      ]
+    },
+    "retro_game_corner": {
+      "label_ja": "旅館のレトロなゲームコーナー",
+      "image_tags": "retro arcade, vintage game machines, glowing screens, japanese inn interior, nostalgic atmosphere, neon lights, wooden floor",
+      "aliases": []
+    },
+    "ski_resort_slope": {
+      "label_ja": "スキー場",
+      "image_tags": "ski resort, snowy slope, powder snow, winter scenery, mountains, cold atmosphere",
+      "aliases": [
+        "ゲレンデ",
+        "スキー場"
+      ]
+    },
+    "ski_resort_lodge": {
+      "label_ja": "スキー場のロッジ",
+      "image_tags": "ski resort lodge interior, cozy fireplace, wooden furniture, warm lighting, hot cocoa on table, snowy mountains visible through window",
+      "aliases": [
+        "ski lodge",
+        "mountain cabin",
+        "hotel room"
+      ]
+    },
+    "home_living_room": {
+      "label_ja": "自宅のリビング",
+      "image_tags": "living room interior, cozy atmosphere, morning sunlight, coffee maker, sofa, domestic scene",
+      "aliases": [
+        "home living room",
+        "居間",
+        "living room",
+        "house interior",
+        "home",
+        "house"
+      ]
+    },
+    "park": {
+      "label_ja": "公園",
+      "image_tags": "outdoor park, trees, walking path, daytime, fresh air",
+      "aliases": [
+        "public park",
+        "garden",
+        "ground",
+        "sports field",
+        "station front fountain",
+        "public plaza"
+      ]
+    },
+    "club_party_venue": {
+      "label_ja": "クラブ",
+      "image_tags": "nightclub, party venue, crowded people, disco lights, neon atmosphere, dance floor, high-quality costumes",
+      "aliases": [
+        "パーティー会場",
+        "クラブ"
+      ]
+    },
+    "after_school_classroom": {
+      "label_ja": "放課後の教室",
+      "image_tags": "empty classroom, sunset light, golden hour, dust motes in air, school desks and chairs, chalkboard, quiet atmosphere",
+      "aliases": [
+        "教室",
+        "放課後の教室",
+        "class room"
+      ]
+    },
+    "school_locker_room": {
+      "label_ja": "部室",
+      "image_tags": "school locker room, benches, sports equipment, indoor lighting",
+      "aliases": [
+        "club room",
+        "changing room"
+      ]
+    },
+    "neighborhood_street_night": {
+      "label_ja": "駅までの坂道",
+      "image_tags": "night, street lights, hill road, residential area, walking path, evening atmosphere",
+      "aliases": [
+        "坂道",
+        "帰り道",
+        "イルミネーションの並木道",
+        "outdoor street",
+        "rainy road"
+      ]
+    },
+    "movie_theater": {
+      "label_ja": "映画館",
+      "image_tags": "cinema interior, movie theater lobby, popcorn stand, dim lighting, large screens in background, cozy atmosphere",
+      "aliases": [
+        "映画館"
+      ]
+    },
+    "train_station_gate": {
+      "label_ja": "駅の改札付近",
+      "image_tags": "train station gate, ticket gates, commuters in background, indoor lighting, public transport hub",
+      "aliases": [
+        "station",
+        "ticket gate"
+      ]
+    },
+    "library_study_room": {
+      "label_ja": "図書館の自習室",
+      "image_tags": "quiet library study room, rows of bookshelves, wooden desks, chairs, soft indoor lighting, peaceful atmosphere, books on tables",
+      "aliases": [
+        "library",
+        "study area"
+      ]
+    },
+    "family_restaurant": {
+      "label_ja": "ファミリーレストラン",
+      "image_tags": "family restaurant interior, dining tables and chairs, menu boards, bright indoor lighting, casual atmosphere",
+      "aliases": [
+        "famiresu",
+        "dining area",
+        "famires"
+      ]
+    },
+    "bus_interior": {
+      "label_ja": "バスの車内",
+      "image_tags": "bus interior, public transport, window view of rainy street, seats, indoor lighting",
+      "aliases": []
+    },
+    "shoe_locker_area": {
+      "label_ja": "靴箱",
+      "image_tags": "shoe locker, indoor hallway, school building interior, wooden benches",
+      "aliases": [
+        "genkan",
+        "entranceway"
+      ]
+    },
+    "adventurers_guild": {
+      "label_ja": "冒険者ギルド",
+      "image_tags": "adventurers guild interior, wooden counter, quest board with papers, torches on walls, medieval fantasy atmosphere, stone floor",
+      "aliases": [
+        "ギルド",
+        "掲示板",
+        "酒場"
+      ]
+    },
+    "cave_entrance": {
+      "label_ja": "洞窟の入り口",
+      "image_tags": "dark cave entrance, damp stone walls, mysterious atmosphere, cold wind blowing, underground cavern, mossy rocks",
+      "aliases": [
+        "洞窟",
+        "cave"
+      ]
+    },
+    "cave_interior": {
+      "label_ja": "洞窟の奥深く",
+      "image_tags": "deep cave interior, dripping water, damp stone walls, dark atmosphere, underground cavern, cold mist",
+      "aliases": [
+        "洞窟の奥",
+        "cave deep inside",
+        "deep cave",
+        "dragon's lair"
+      ]
+    },
+    "inn_room": {
+      "label_ja": "宿屋の客室",
+      "image_tags": "japanese inn interior, cozy bedroom, tatami mats, futon on floor, warm lighting, wooden architecture, peaceful atmosphere",
+      "aliases": [
+        "inn",
+        "guest room"
+      ]
+    },
+    "city_square_parade": {
+      "label_ja": "王都の広場",
+      "image_tags": "large city square, royal capital, parade, crowd of people, festive atmosphere, medieval fantasy architecture",
+      "aliases": [
+        "royal plaza",
+        "capital square"
+      ]
+    },
+    "castle_gate": {
+      "label_ja": "王城の門",
+      "image_tags": "massive stone walls, castle gate, towering architecture, medieval fantasy style, heavy iron portcullis",
+      "aliases": [
+        "king's castle entrance"
+      ]
+    },
+    "throne_room": {
+      "label_ja": "謁見の間",
+      "image_tags": "grand throne room, majestic architecture, royal hall, high ceilings, stone floor, torches on walls, medieval fantasy style",
+      "aliases": [
+        "audience chamber",
+        "throne room"
+      ]
+    },
+    "castle_balcony": {
+      "label_ja": "城のバルコニー",
+      "image_tags": "castle balcony, stone railing, night view, starry sky, moonlight, medieval fantasy architecture, open air",
+      "aliases": [
+        "城のバルコニー",
+        "balcony",
+        "keep balcony",
+        "tenshukaku"
+      ]
+    },
+    "clock_tower_base": {
+      "label_ja": "時計塔の下",
+      "image_tags": "large stone clock tower, medieval fantasy architecture, cobblestone ground, public square, daytime, magical atmosphere",
+      "aliases": [
+        "時計塔の下",
+        "clock tower base"
+      ]
+    },
+    "grand_hall_lecture_theater": {
+      "label_ja": "大講堂",
+      "image_tags": "large lecture hall, rows of wooden desks, high ceilings, magical atmosphere, stone pillars, students in background",
+      "aliases": [
+        "great auditorium",
+        "lecture hall",
+        "講堂",
+        "教室"
+      ]
+    },
+    "alchemy_lab": {
+      "label_ja": "調合室",
+      "image_tags": "alchemy lab, bubbling potions, shelves of ingredients, magical atmosphere, laboratory equipment, stone walls",
+      "aliases": [
+        "調合室",
+        "錬金術の部屋"
+      ]
+    },
+    "courtyard": {
+      "label_ja": "中庭",
+      "image_tags": "outdoor courtyard, stone floor, garden plants, open sky, wind blowing leaves",
+      "aliases": [
+        "garden",
+        "inner yard"
+      ]
+    },
+    "dormitory_lounge": {
+      "label_ja": "学生寮の談話室",
+      "image_tags": "dormitory lounge, student common room, cozy interior, sofas, indoor lighting, relaxed atmosphere",
+      "aliases": [
+        "student lounge",
+        "下宿アパート",
+        "寮の部屋"
+      ]
+    },
+    "desert_entrance": {
+      "label_ja": "砂漠の入り口",
+      "image_tags": "desert entrance, vast sand dunes, scorching sun, heat haze, shimmering air, dry wasteland",
+      "aliases": [
+        "sand desert",
+        "hot desert"
+      ]
+    },
+    "desert_oasis": {
+      "label_ja": "砂漠のオアシス",
+      "image_tags": "oasis, palm trees, water pool, sand dunes, desert landscape, bright sunlight, tropical plants",
+      "aliases": []
+    },
+    "desert_ancient_ruins": {
+      "label_ja": "砂漠の古代遺跡",
+      "image_tags": "ancient ruins, desert, sand dunes, crumbling stone pillars, weathered statues, scorching sun, heat haze, dry wasteland, archaeological site",
+      "aliases": [
+        "desert ruins",
+        "ancient temple in desert",
+        "砂漠の遺跡",
+        "古代遺跡"
+      ]
+    },
+    "nagaya_room": {
+      "label_ja": "長屋の部屋",
+      "image_tags": "traditional japanese nagaya house, narrow room, tatami mats, wooden walls, rustic interior, old edo period atmosphere",
+      "aliases": [
+        "longhouse room",
+        "nagaya",
+        "longhouse veranda"
+      ]
+    },
+    "village_well": {
+      "label_ja": "共同井戸",
+      "image_tags": "outdoor, village well, stone well, water bucket, rural scenery, daytime",
+      "aliases": [
+        "common well",
+        "water well"
+      ]
+    },
+    "daimyo_mansion_gate": {
+      "label_ja": "大名屋敷の門",
+      "image_tags": "massive wooden gate, daimyo mansion entrance, traditional japanese architecture, stone path, imposing structure, daytime",
+      "aliases": [
+        "daimyo_gate",
+        "mansion_entrance"
+      ]
+    },
+    "military_tent_interior": {
+      "label_ja": "陣幕",
+      "image_tags": "military tent, interior, flickering firelight, bonfire glow, night time, maps on table, strategic planning atmosphere",
+      "aliases": [
+        "陣幕",
+        "camp tent",
+        "base camp",
+        "command post"
+      ]
+    },
+    "fortress_watchtower": {
+      "label_ja": "砦の物見櫓",
+      "image_tags": "wooden watchtower, fortress top, high vantage point, overlooking battlefield, dawn light, morning mist, wooden railings, panoramic view",
+      "aliases": [
+        "fortress tower",
+        "watchtower"
+      ]
+    },
+    "retro_western_mansion_study": {
+      "label_ja": "レトロな洋館の書斎",
+      "image_tags": "retro western mansion interior, study room, surrounded by bookshelves, antique furniture, warm lighting, scholarly atmosphere, writing desk",
+      "aliases": [
+        "洋館の書斎",
+        "書斎"
+      ]
+    },
+    "tram_interior": {
+      "label_ja": "路面電車の中",
+      "image_tags": "streetcar interior, tram car, large windows, view of city street, traditional japanese architecture, tiled roofs, western-style buildings, urban scenery, daytime",
+      "aliases": [
+        "路面電車",
+        "トラム"
+      ]
+    },
+    "modern_cafe_interior": {
+      "label_ja": "モダンなカフェ（喫茶店）",
+      "image_tags": "modern cafe interior, cozy atmosphere, stove with warm glow, wooden furniture, round chairs, indoor lighting, retro-modern aesthetic",
+      "aliases": [
+        "喫茶店",
+        "cafe"
+      ]
+    },
+    "wet_red_brick_slope": {
+      "label_ja": "赤レンガの濡れた坂道",
+      "image_tags": "red brick slope, wet ground, rainy weather, street scene, urban atmosphere, puddles, evening light",
+      "aliases": [
+        "red brick road",
+        "rainy street"
+      ]
+    },
+    "imperial_palace_interior": {
+      "label_ja": "寝殿造りの奥深く",
+      "image_tags": "traditional japanese architecture, imperial palace style, shinden-zukuri, interior, deep room, tatami mats, wooden pillars, morning light",
+      "aliases": [
+        "shinden-zukuri",
+        "palace interior"
+      ]
+    },
+    "shinden_corridor": {
+      "label_ja": "渡り廊下",
+      "image_tags": "traditional japanese architecture, shinden-zukuri style, wooden corridor, view of garden pond, dragon head boat, elegant scenery, morning light",
+      "aliases": [
+        "透廊",
+        "corridor"
+      ]
+    },
+    "shishinden_hall": {
+      "label_ja": "紫宸殿",
+      "image_tags": "vast imperial hall, shishinden, traditional japanese architecture, grand scale, wooden pillars, tatami mats, majestic atmosphere, palace interior",
+      "aliases": [
+        "purple chamber",
+        "shishinden"
+      ]
+    },
+    "garden_stream": {
+      "label_ja": "庭園の小川",
+      "image_tags": "japanese garden, stream, water flow, cherry blossom petals falling, sakura, peaceful atmosphere, outdoor, nature",
+      "aliases": [
+        "遣水",
+        "garden pond"
+      ]
+    },
+    "private_room": {
+      "label_ja": "自室",
+      "image_tags": "private room, tatami mats, wooden walls, candle light, night time, interior, quiet atmosphere",
+      "aliases": [
+        "bedroom",
+        "personal quarters"
+      ]
+    },
+    "theme_park_entrance": {
+      "label_ja": "テーマパークの入り口",
+      "image_tags": "theme park entrance, amusement park gate, daytime, bright sunlight, crowds in background, colorful decorations",
+      "aliases": [
+        "park entrance",
+        "amusement park",
+        "入場ゲート",
+        "パークの入り口"
+      ]
+    },
+    "theme_park_queue": {
+      "label_ja": "テーマパークの待ち行列",
+      "image_tags": "amusement park interior, roller coaster queue, crowd of people, colorful decorations, theme park atmosphere, daytime",
+      "aliases": [
+        "roller coaster line",
+        "theme park inside"
+      ]
+    },
+    "theme_park_restaurant": {
+      "label_ja": "ポップなテーマレストラン",
+      "image_tags": "pop theme restaurant, colorful interior, hamburger shop, amusement park food court, bright lighting, cheerful atmosphere",
+      "aliases": [
+        "フードコート"
+      ]
+    },
+    "theme_park_sidewalk": {
+      "label_ja": "テーマパークの沿道",
+      "image_tags": "parade route, sidewalk, crowd in background, colorful decorations, daytime, theme park atmosphere",
+      "aliases": [
+        "parade route",
+        "theme park street"
+      ]
+    },
+    "station_building_japanese_restaurant": {
+      "label_ja": "駅ビル内の和食屋",
+      "image_tags": "Japanese restaurant inside a station building, traditional interior, wooden tables, warm lighting, cozy atmosphere, dinner setting",
+      "aliases": [
+        "和食屋",
+        "駅ビル内のレストラン"
+      ]
+    },
+    "live_venue_merchandise_area": {
+      "label_ja": "ライブ会場の物販エリア",
+      "image_tags": "concert venue, merchandise booth, crowd of people, posters, stage lights in background, indoor arena",
+      "aliases": [
+        "ライブ会場",
+        "物販コーナー"
+      ]
+    },
+    "live_venue_standing_area": {
+      "label_ja": "ライブ会場のスタンディングエリア",
+      "image_tags": "concert venue, standing area, crowded audience, stage lights in background, high energy atmosphere, indoor arena",
+      "aliases": [
+        "ライブ会場",
+        "スタンディングエリア",
+        "ライブハウス",
+        "コンサート会場",
+        "ステージ裏"
+      ]
+    },
+    "live_venue_exterior": {
+      "label_ja": "ライブ会場の外",
+      "image_tags": "night time, outdoor, city lights in background, cool night breeze, street scene",
+      "aliases": [
+        "concert venue outside",
+        "street at night"
+      ]
+    },
+    "izakaya_interior": {
+      "label_ja": "居酒屋",
+      "image_tags": "japanese pub, izakaya, wooden tables, warm lighting, sake bottles, casual dining atmosphere",
+      "aliases": [
+        "pub",
+        "tavern"
+      ]
+    },
+    "museum_lobby": {
+      "label_ja": "美術館のロビー",
+      "image_tags": "art museum lobby, quiet atmosphere, gallery interior, high ceilings, sculptures, paintings on walls, polished floor, audio guide device",
+      "aliases": [
+        "美術館",
+        "ギャラリー"
+      ]
+    },
+    "art_museum_exhibition_hall": {
+      "label_ja": "美術館の展示室",
+      "image_tags": "dim lighting, quiet atmosphere, paintings on walls, gallery space, museum interior",
+      "aliases": [
+        "gallery room",
+        "art exhibition hall"
+      ]
+    },
+    "museum_cafe_terrace": {
+      "label_ja": "美術館のカフェテラス",
+      "image_tags": "art museum cafe terrace, indoor seating area, warm lighting, cozy atmosphere, coffee cups on tables, large windows looking out to gallery",
+      "aliases": []
+    },
+    "museum_shop": {
+      "label_ja": "美術館のショップ",
+      "image_tags": "art museum gift shop, postcards on display, art books, shelves with merchandise, interior lighting, quiet atmosphere",
+      "aliases": [
+        "ミュージアムショップ"
+      ]
+    },
+    "library_reading_space": {
+      "label_ja": "図書館の読書スペース",
+      "image_tags": "library interior, reading space, bookshelves, quiet atmosphere, study tables, soft lighting, cozy environment",
+      "aliases": [
+        "図書室",
+        "読書コーナー"
+      ]
+    },
+    "shopping_mall_entrance": {
+      "label_ja": "巨大なショッピングモール",
+      "image_tags": "huge shopping mall, entrance area, information board, directory sign, bright indoor lighting, modern architecture, wide interior space, crowds in background",
+      "aliases": [
+        "shopping center",
+        "mall lobby"
+      ]
+    },
+    "select_shop_interior": {
+      "label_ja": "セレクトショップ",
+      "image_tags": "boutique interior, clothing racks, hangers, autumn dresses, stylish shop, warm lighting, fashion store",
+      "aliases": [
+        "clothing store",
+        "fashion boutique"
+      ]
+    },
+    "fitting_room": {
+      "label_ja": "試着室",
+      "image_tags": "fitting room, clothing rack, mirrors, interior, shop background",
+      "aliases": [
+        "dressing room"
+      ]
+    },
+    "movie_theater_interior": {
+      "label_ja": "映画館のシアター",
+      "image_tags": "cinema theater, movie screen, rows of seats, dim lighting, air conditioning atmosphere",
+      "aliases": [
+        "シアター",
+        "映画館"
+      ]
+    },
+    "nurse_station": {
+      "label_ja": "ナースステーション",
+      "image_tags": "hospital nurse station, medical monitors, night time, quiet atmosphere, clinical interior, medical charts",
+      "aliases": [
+        "nursing station",
+        "medical station"
+      ]
+    },
+    "hospital_corridor": {
+      "label_ja": "病院の廊下",
+      "image_tags": "hospital hallway, dim lighting, medical equipment, stretcher, clinical atmosphere",
+      "aliases": [
+        "medical corridor"
+      ]
+    },
+    "fire_station_garage": {
+      "label_ja": "消防署の車庫",
+      "image_tags": "fire station garage, rescue equipment, fire trucks, industrial interior, early morning light",
+      "aliases": [
+        "fire station",
+        "garage",
+        "消防署"
+      ]
+    },
+    "mountain_road_training_ground": {
+      "label_ja": "山道の訓練現場",
+      "image_tags": "mountain road, muddy slope, training ground, outdoor, nature, rugged terrain",
+      "aliases": [
+        "登山口",
+        "trailhead"
+      ]
+    },
+    "cliffside_rescue_scene": {
+      "label_ja": "崖のそば",
+      "image_tags": "cliff edge, steep drop, rocky terrain, rope hanging down, outdoor, nature, dangerous height",
+      "aliases": [
+        "崖",
+        "崖下"
+      ]
+    },
+    "dressing_room": {
+      "label_ja": "楽屋",
+      "image_tags": "backstage dressing room, vanity mirror with light bulbs, makeup table, costumes on racks, indoor, preparation area",
+      "aliases": [
+        "楽屋",
+        "控え室",
+        "舞台裏",
+        "makeup room",
+        "backstage",
+        "backstage dressing room"
+      ]
+    },
+    "photo_studio": {
+      "label_ja": "撮影スタジオ",
+      "image_tags": "photography studio, white background, cables on floor, camera equipment, professional lighting, indoor",
+      "aliases": [
+        "studio",
+        "shooting location"
+      ]
+    },
+    "entrance_hallway": {
+      "label_ja": "玄関",
+      "image_tags": "japanese house entrance, genkan, floor mat, water droplets on floor, indoor, home interior",
+      "aliases": [
+        "genkan",
+        "entryway",
+        "玄関"
+      ]
+    },
+    "bathroom_sink_area": {
+      "label_ja": "洗面所",
+      "image_tags": "bathroom sink, mirror, water droplets, indoor, home interior",
+      "aliases": [
+        "washroom",
+        "vanity area"
+      ]
+    },
+    "living_room": {
+      "label_ja": "リビング",
+      "image_tags": "sofa, hot milk cup, cozy living room, indoor, home interior",
+      "aliases": [
+        "home interior",
+        "living room",
+        "居間"
+      ]
+    },
+    "bedroom": {
+      "label_ja": "寝室",
+      "image_tags": "bed, pillow, bedside table, cozy atmosphere, indoor, home interior",
+      "aliases": [
+        "bedroom",
+        "bed room",
+        "private room",
+        "game room",
+        "room"
+      ]
+    },
+    "kitchen": {
+      "label_ja": "キッチン",
+      "image_tags": "coffee cup, kitchen counter, indoor, home interior",
+      "aliases": [
+        "台所"
+      ]
+    },
+    "conference_room": {
+      "label_ja": "会議室",
+      "image_tags": "office interior, conference table, chairs, large windows, city view background",
+      "aliases": [
+        "meeting room",
+        "office space"
+      ]
+    },
+    "cyberpunk_alleyway": {
+      "label_ja": "路地裏",
+      "image_tags": "back alley, neon lights, holographic signs, acid rain, wet ground, cyberpunk aesthetic, night time",
+      "aliases": [
+        "路地裏",
+        "alleyway",
+        "cyberpunk alley",
+        "back alley"
+      ]
+    },
+    "secret_hideout": {
+      "label_ja": "秘密のアジト",
+      "image_tags": "hidden base, secret room, high-tech interior, main console, computer screens, hacking equipment, cyberpunk aesthetic, dim lighting",
+      "aliases": [
+        "hidden base",
+        "hacking room",
+        "secret room"
+      ]
+    },
+    "zero_gravity_private_cabin": {
+      "label_ja": "無重力の個人船室",
+      "image_tags": "zero gravity, private cabin, spaceship interior, futuristic, floating objects, sci-fi aesthetic",
+      "aliases": [
+        "personal ship cabin",
+        "space cabin"
+      ]
+    },
+    "airlock_dock": {
+      "label_ja": "エアロック・ドック",
+      "image_tags": "airlock dock, spaceship interior, large observation window, view of earth from space, blue planet, stars in background, sci-fi atmosphere",
+      "aliases": [
+        "space station dock",
+        "observation deck",
+        "airlock",
+        "space dock",
+        "格納庫",
+        "ハンガー"
+      ]
+    },
+    "diagnostic_pod": {
+      "label_ja": "診断ポッド",
+      "image_tags": "medical pod, futuristic diagnostic chamber, sci-fi medical bay, glowing lights, high-tech interior",
+      "aliases": [
+        "diagnosis pod",
+        "medical pod"
+      ]
+    },
+    "virtual_battle_arena": {
+      "label_ja": "バーチャルバトルアリーナ",
+      "image_tags": "virtual reality arena, futuristic battlefield, digital environment, glowing grid, high-tech atmosphere",
+      "aliases": [
+        "VR arena",
+        "battleground",
+        "error space",
+        "white void"
+      ]
+    },
+    "lava_zone": {
+      "label_ja": "溶岩地帯",
+      "image_tags": "lava zone, flowing magma, volcanic environment, heat haze effect, glowing orange light, dangerous terrain, smoke and steam",
+      "aliases": [
+        "magma area",
+        "volcanic field"
+      ]
+    },
+    "office_lobby": {
+      "label_ja": "ビルの中のロビー",
+      "image_tags": "corporate building lobby, modern interior, reception desk, large windows, indoor lighting",
+      "aliases": [
+        "building lobby",
+        "office entrance",
+        "lobby"
+      ]
+    },
+    "luxury_executive_hallway": {
+      "label_ja": "役員エリアの高級な廊下",
+      "image_tags": "luxury hallway, executive area, high-end interior, polished marble floor, gold accents, dim sophisticated lighting, security cameras, top floor",
+      "aliases": []
+    },
+    "executive_office": {
+      "label_ja": "会長の書斎",
+      "image_tags": "luxurious office, mahogany desk, bookshelves, computer terminal, dim lighting, high-end furniture, private study",
+      "aliases": [
+        "chairman's study",
+        "office"
+      ]
+    },
+    "park_cherry_blossom_avenue": {
+      "label_ja": "公園の桜並木",
+      "image_tags": "park, cherry blossoms, sakura trees, blooming flowers, outdoor, spring atmosphere, path",
+      "aliases": [
+        "sakura park",
+        "cherry blossom walk",
+        "park",
+        "sakura avenue",
+        "桜の並木道",
+        "ライトアップされた夜桜",
+        "公園",
+        "ベンチ"
+      ]
+    },
+    "festival_food_stall_street": {
+      "label_ja": "屋台の通り",
+      "image_tags": "food stalls, street food, night market atmosphere, lanterns, delicious smells, crowded path",
+      "aliases": [
+        "屋台の通り",
+        "食べ物の並ぶ通り",
+        "snack stand",
+        "concession stand"
+      ]
+    },
+    "traditional_tea_house": {
+      "label_ja": "甘酒茶屋",
+      "image_tags": "traditional japanese tea house, noren curtains, wooden structure, warm interior lighting, historical atmosphere",
+      "aliases": [
+        "amazake_chaya",
+        "甘酒茶屋",
+        "food stall"
+      ]
+    },
+    "swimming_pool": {
+      "label_ja": "プール",
+      "image_tags": "outdoor swimming pool, bright sunlight, water surface, poolside tiles, summer atmosphere",
+      "aliases": [
+        "pool",
+        "water park",
+        "pool area",
+        "summer event area"
+      ]
+    },
+    "observation_deck": {
+      "label_ja": "展望台",
+      "image_tags": "observation deck, scenic overlook, autumn foliage, panoramic view of mountains and trees, clear sky, outdoor",
+      "aliases": [
+        "viewpoint",
+        "scenic spot"
+      ]
+    },
+    "mountain_summit": {
+      "label_ja": "山頂",
+      "image_tags": "snowy peak, high altitude, rocky terrain, heavy wind, clouds below, mountain scenery",
+      "aliases": [
+        "peak",
+        "summit"
+      ]
+    },
+    "suspension_bridge": {
+      "label_ja": "吊り橋",
+      "image_tags": "suspension bridge, high altitude, mountain scenery, railing, wooden planks, swaying motion",
+      "aliases": [
+        "吊り橋",
+        "bridge"
+      ]
+    },
+    "ryokan_lobby": {
+      "label_ja": "旅館のロビー",
+      "image_tags": "japanese inn lobby, tatami mats, traditional architecture, warm lighting, relaxing atmosphere, indoor",
+      "aliases": [
+        "inn lobby",
+        "ryokan lobby",
+        "japanese inn lobby"
+      ]
+    },
+    "outdoor_winter_scenery": {
+      "label_ja": "屋外",
+      "image_tags": "snowy night, freezing atmosphere, winter scenery",
+      "aliases": []
+    },
+    "shrine_haiden": {
+      "label_ja": "拝殿",
+      "image_tags": "shrine hall, haiden, japanese architecture, wooden structure, offering box, incense smoke, worshippers in background",
+      "aliases": [
+        "拝殿",
+        "haiden",
+        "shrine hall"
+      ]
+    },
+    "gym_locker_room": {
+      "label_ja": "ジムのロッカー",
+      "image_tags": "gym locker room, metal lockers, sports facility, indoor, athletic atmosphere",
+      "aliases": [
+        "gym",
+        "fitness center",
+        "dressing room",
+        "changing room"
+      ]
+    },
+    "aerobics_studio": {
+      "label_ja": "スタジオ",
+      "image_tags": "dance studio, mirrors on walls, wooden floor, aerobic equipment, bright lighting, indoor",
+      "aliases": [
+        "スタジオ",
+        "ダンススタジオ"
+      ]
+    },
+    "baseball_ground": {
+      "label_ja": "野球グラウンド",
+      "image_tags": "outdoor, baseball field, dirt ground, grass, stadium lights, sports facility",
+      "aliases": [
+        "field",
+        "グラウンド",
+        "baseball stadium",
+        "baseball field",
+        "stadium"
+      ]
+    },
+    "marathon_course": {
+      "label_ja": "マラソンコース",
+      "image_tags": "outdoor, marathon race, running track, crowd of runners, uphill road, sunny day",
+      "aliases": [
+        "race course",
+        "running path",
+        "陸上競技場",
+        "トラック"
+      ]
+    },
+    "grass_field": {
+      "label_ja": "芝生の上",
+      "image_tags": "grass field, outdoor, stadium surroundings, resting area",
+      "aliases": [
+        "park",
+        "bench"
+      ]
+    },
+    "yoga_studio": {
+      "label_ja": "ヨガスタジオ",
+      "image_tags": "yoga studio, zen atmosphere, wooden floor, large windows, indoor plants, peaceful environment",
+      "aliases": [
+        "yoga center",
+        "meditation room"
+      ]
+    },
+    "shower_room": {
+      "label_ja": "シャワー室",
+      "image_tags": "shower room, steam, water droplets on walls, tiled floor, wet atmosphere, indoor",
+      "aliases": [
+        "public bath",
+        "sentou"
+      ]
+    },
+    "organic_cafe_studio": {
+      "label_ja": "スタジオ併設のカフェ",
+      "image_tags": "organic cafe, studio adjacent, wooden tables, warm lighting, cozy atmosphere, tea cups",
+      "aliases": [
+        "カフェ",
+        "スタジオのカフェ"
+      ]
+    },
+    "amusement_park_queue": {
+      "label_ja": "ジェットコースターの列",
+      "image_tags": "amusement park, roller coaster queue, theme park atmosphere, crowd of people, colorful decorations",
+      "aliases": [
+        "roller coaster line",
+        "theme park entrance",
+        "遊園地",
+        "夜景"
+      ]
+    },
+    "stone_paved_path": {
+      "label_ja": "石畳の道",
+      "image_tags": "outdoor, rainy day, stone pavement, wet ground, raindrops, puddles, amusement park background",
+      "aliases": []
+    },
+    "theme_restaurant": {
+      "label_ja": "テーマレストラン",
+      "image_tags": "theme restaurant, interior, dining area, decorative decor, lunch setting",
+      "aliases": []
+    },
+    "parade_sideline": {
+      "label_ja": "パレードの沿道",
+      "image_tags": "night street, parade route, crowd of people, festive atmosphere, night lighting, sidewalk",
+      "aliases": [
+        "沿道",
+        "パレードの最前列"
+      ]
+    },
+    "dressing_room_mirror": {
+      "label_ja": "鏡の前",
+      "image_tags": "mirror, dressing room, indoor, reflection, vanity",
+      "aliases": []
+    },
+    "tropical_airport": {
+      "label_ja": "南国の空港",
+      "image_tags": "tropical airport, palm trees outside windows, humid atmosphere, bright sunlight, arrivals gate, tropical scenery",
+      "aliases": []
+    },
+    "hotel_room": {
+      "label_ja": "ホテルの一室",
+      "image_tags": "hotel room interior, balcony view of ocean at sunset, sofa, cozy atmosphere, indoor",
+      "aliases": [
+        "resort hotel room",
+        "ryokan room"
+      ]
+    },
+    "underground_wine_cellar": {
+      "label_ja": "地下のワインセラー",
+      "image_tags": "underground wine cellar, mossy walls, stone floor, old wooden barrels, dim lighting, earthy atmosphere",
+      "aliases": [
+        "wine cellar",
+        "cellar"
+      ]
+    },
+    "aquarium_backyard": {
+      "label_ja": "水族館のバックヤード",
+      "image_tags": "aquarium backyard, maintenance area, jellyfish tanks, industrial pipes, water filtration system, indoor, dim lighting",
+      "aliases": [
+        "水族館の裏側",
+        "飼育員エリア"
+      ]
+    },
+    "ancient_book_restoration_room": {
+      "label_ja": "古書修復室",
+      "image_tags": "restoration workshop, workbench, old books, tools, warm lighting, indoor",
+      "aliases": [
+        "古書修復室",
+        "book restoration room"
+      ]
+    },
+    "glass_craft_atelier": {
+      "label_ja": "路地裏のガラス細工アトリエ",
+      "image_tags": "back alley, glass blowing studio, furnace, glowing fire, workbench, artisan workshop, industrial interior",
+      "aliases": []
+    },
+    "paper_lantern_workshop": {
+      "label_ja": "古い地下街の紙灯籠工房",
+      "image_tags": "underground mall, old workshop, paper lanterns, wooden frames, dim lighting, dusty atmosphere, traditional craft studio",
+      "aliases": []
+    }
+  },
+  "clothing": {
+    "hoodie_and_jeans": {
+      "label_ja": "パーカーとジーンズ",
+      "image_tags": "casual hoodie, denim jeans, comfortable clothes, travel outfit",
+      "aliases": [
+        "パーカー",
+        "ジーンズ"
+      ]
+    },
+    "summer_dress": {
+      "label_ja": "薄いサマーワンピース",
+      "image_tags": "light summer dress, sleeveless dress, airy fabric, tropical outfit",
+      "aliases": [
+        "summer dress",
+        "sundress"
+      ]
+    },
+    "light_loungewear": {
+      "label_ja": "軽い部屋着",
+      "image_tags": "light loungewear, comfortable indoor clothes, relaxed outfit, soft fabric",
+      "aliases": [
+        "pajamas",
+        "home wear",
+        "loungewear",
+        "sweatpants",
+        "roomwear",
+        "部屋着"
+      ]
+    },
+    "navy_knit_dress": {
+      "label_ja": "紺色のニットワンピース",
+      "image_tags": "navy blue knit dress, long sleeve knitwear, cozy winter outfit, elegant simple dress",
+      "aliases": [
+        "紺色のワンピース",
+        "ニットワンピ",
+        "ニットのドレス",
+        "紺色のニットドレス"
+      ]
+    },
+    "wet_one_piece": {
+      "label_ja": "濡れたワンピース",
+      "image_tags": "wet clothes, soaked fabric, damp hair, shivering slightly, wet one-piece dress",
+      "aliases": [
+        "濡れた服"
+      ]
+    },
+    "wet_one_piece_with_poncho": {
+      "label_ja": "濡れたワンピースと薄いビニール雨合羽",
+      "image_tags": "wet one-piece dress, thin plastic raincoat, poncho over shoulders, shivering slightly, damp hair",
+      "aliases": [
+        "濡れた服",
+        "雨合羽"
+      ]
+    },
+    "natural_colored_apron": {
+      "label_ja": "生成りのエプロン",
+      "image_tags": "natural colored apron, linen apron, work clothes, earthy tones, rustic style",
+      "aliases": [
+        "生成りのエプロン",
+        "apron",
+        "エプロン姿",
+        "linen apron",
+        "work clothes"
+      ]
+    },
+    "beekeeping_veil_and_apron": {
+      "label_ja": "白い防蜂ベールとエプロン",
+      "image_tags": "white beekeeping veil, mesh face cover, natural colored apron, linen texture",
+      "aliases": [
+        "防蜂ベール",
+        "白いベール",
+        "養蜂の服",
+        "beekeeping gear"
+      ]
+    },
+    "natural_colored_apron_sleeve_covers": {
+      "label_ja": "生成りのエプロンと袖カバー",
+      "image_tags": "sleeve covers, protective arm guards, clay workshop gear",
+      "aliases": []
+    },
+    "beekeeping_veil_and_apron_gloves": {
+      "label_ja": "白い防蜂ベールとエプロン",
+      "image_tags": "white beekeeping veil, mesh face cover, natural colored apron, protective gloves, smoke from smoker",
+      "aliases": []
+    },
+    "natural_colored_apron_gloves_veil": {
+      "label_ja": "生成りのエプロン",
+      "image_tags": "no veil, no gloves, apron only",
+      "aliases": []
+    },
+    "business_suit_and_tie": {
+      "label_ja": "ビジネススーツとネクタイ",
+      "image_tags": "sharp business suit, necktie, polished leather shoes, formal office wear, professional attire",
+      "aliases": [
+        "スーツ",
+        "ネクタイ",
+        "business suit",
+        "formal suit",
+        "recruit suit"
+      ]
+    },
+    "shirt_with_rolled_sleeves": {
+      "label_ja": "シャツ（袖をまくった）",
+      "image_tags": "white dress shirt, rolled up sleeves, no jacket, professional but relaxed",
+      "aliases": []
+    },
+    "smart_casual_jacket_pants": {
+      "label_ja": "ジャケパンスタイル",
+      "image_tags": "smart casual outfit, blazer jacket, slacks, relaxed professional attire, semi-formal",
+      "aliases": [
+        "jacket and pants style",
+        "business casual",
+        "jacket and slacks",
+        "smart casual",
+        "jacket and pants"
+      ]
+    },
+    "shirt_and_sweatpants": {
+      "label_ja": "ワイシャツとスウェット",
+      "image_tags": "white dress shirt, business shirt, sweatpants, casual bottom wear, indoor home outfit",
+      "aliases": [
+        "ワイシャツとスウェット",
+        "office casual at home"
+      ]
+    },
+    "sportswear_and_sneakers": {
+      "label_ja": "スポーツウェアとスニーカー",
+      "image_tags": "athletic wear, jersey, shorts, sneakers, sports shoes",
+      "aliases": [
+        "gym clothes",
+        "スポーツウェア",
+        "tracksuit",
+        "running outfit"
+      ]
+    },
+    "casual_private_clothes": {
+      "label_ja": "カジュアルな私服",
+      "image_tags": "casual outfit, stylish private clothes, relaxed but fashionable, clean look",
+      "aliases": [
+        "privately owned clothes",
+        "everyday wear",
+        "home clothes",
+        "casual wear",
+        "私服",
+        "制服",
+        "private clothes",
+        "hooded sweatshirt",
+        "casual hoodie",
+        "linen outfit",
+        "kosode",
+        "ネルシャツとズボン"
+      ]
+    },
+    "swimwear": {
+      "label_ja": "水着",
+      "image_tags": "bikini, swimsuit, summer beach wear",
+      "aliases": [
+        "bathing suit"
+      ]
+    },
+    "yukata": {
+      "label_ja": "浴衣",
+      "image_tags": "traditional japanese yukata, cotton fabric, kimono style, relaxed travel wear",
+      "aliases": [
+        "japanese robe",
+        "light kimono",
+        "relaxed kimono"
+      ]
+    },
+    "heavy_winter_gear": {
+      "label_ja": "厚手の防寒ウェア",
+      "image_tags": "thick winter jacket, snow pants, heavy outerwear, insulated clothing, winter sports gear",
+      "aliases": [
+        "防寒ウェア",
+        "スキーウェア",
+        "fleece jacket over sweats",
+        "厚手のウールマント"
+      ]
+    },
+    "formal_dress": {
+      "label_ja": "フォーマルなドレス",
+      "image_tags": "elegant formal dress, evening gown, sophisticated attire, high-end fashion",
+      "aliases": [
+        "courtly robes",
+        "royal garments"
+      ]
+    },
+    "fluffy_pajamas": {
+      "label_ja": "モコモコのパジャマ",
+      "image_tags": "fluffy pajamas, oversized sleepwear, cozy fabric, soft texture, indoor loungewear",
+      "aliases": [
+        "モコモコパジャマ",
+        "pajamas",
+        "sleepwear",
+        "room wear",
+        "roomwear",
+        "oversized sleepwear"
+      ]
+    },
+    "trench_coat": {
+      "label_ja": "トレンチコート",
+      "image_tags": "classic trench coat, stylish outerwear, autumn fashion, walking outfit",
+      "aliases": [
+        "overcoat",
+        "winter coat",
+        "raincoat"
+      ]
+    },
+    "vampire_costume": {
+      "label_ja": "ドラキュラの仮装衣装",
+      "image_tags": "dracula costume, vampire outfit, cape, gothic style, halloween costume",
+      "aliases": []
+    },
+    "school_uniform": {
+      "label_ja": "制服",
+      "image_tags": "japanese school uniform, blazer, pleated skirt",
+      "aliases": [
+        "seifuku",
+        "uniform with yellow raincoat",
+        "制服"
+      ]
+    },
+    "leather_light_armor": {
+      "label_ja": "革の軽鎧",
+      "image_tags": "leather light armor, adventurer gear, practical leather tunic, belt with pouches, sturdy boots, fantasy equipment",
+      "aliases": [
+        "軽鎧",
+        "革の鎧"
+      ]
+    },
+    "leather_light_armor_with_chainmail": {
+      "label_ja": "革の軽鎧と鉄製のチェインメイル",
+      "image_tags": "leather light armor, iron chainmail, heavy metal mesh, layered armor, fantasy adventurer gear, protective clothing",
+      "aliases": [
+        "革鎧とチェインメイル",
+        "adventurer gear"
+      ]
+    },
+    "traveler_cloak_and_boots": {
+      "label_ja": "旅人のマントと頑丈なブーツ",
+      "image_tags": "traveler cloak, heavy fabric mantle, sturdy leather boots, rugged travel gear, adventurer clothing",
+      "aliases": [
+        "traveler outfit",
+        "adventurer clothing",
+        "旅人の服",
+        "protective cloak",
+        "desert attire",
+        "トレッキングウェア",
+        "登山靴"
+      ]
+    },
+    "apprentice_mage_uniform": {
+      "label_ja": "見習い魔術師の制服",
+      "image_tags": "magical apprentice uniform, wizard robes, academy attire, magical accessories, fantasy clothing",
+      "aliases": [
+        "見習い魔術師の制服",
+        "apprentice mage uniform",
+        "magic school uniform"
+      ]
+    },
+    "fireproof_acid_resistant_hooded_robe": {
+      "label_ja": "耐火・防酸性のフード付きローブ",
+      "image_tags": "heavy hooded robe, fireproof fabric, acid-resistant coating, protective magical garment, thick material, hood up",
+      "aliases": [
+        "耐火・防酸性のフード付きローブ"
+      ]
+    },
+    "formal_kimono_and_hakama": {
+      "label_ja": "きちんとした着物と袴",
+      "image_tags": "formal kimono, hakama pants, traditional japanese attire, elegant silk fabric, tied hair, dignified appearance",
+      "aliases": [
+        "formal_japanese_dress",
+        "直垂",
+        "hitatare",
+        "書生風の着物と袴",
+        "羽織",
+        "layered kimono",
+        "karaginu",
+        "casual kimono and hakama"
+      ]
+    },
+    "leather_light_armor_with_chainmail_helmet": {
+      "label_ja": "重厚な赤糸威の大鎧と角の生えた兜",
+      "image_tags": "heavy red armor, ornate samurai-style plate armor, horned helmet, majestic warrior gear, fantasy heavy armor",
+      "aliases": [
+        "red armor",
+        "horned helmet"
+      ]
+    },
+    "taisho_hakama_shirt": {
+      "label_ja": "袴とシャツ（羽織を脱いだ状態）",
+      "image_tags": "traditional hakama pants, white shirt, no haori, leather boots, sitting on a round chair",
+      "aliases": [
+        "袴姿",
+        "袴とシャツ"
+      ]
+    },
+    "band_merch_tshirt": {
+      "label_ja": "アーティスト公式Tシャツ",
+      "image_tags": "official band merchandise t-shirt, graphic tee, fan apparel, casual wear",
+      "aliases": [
+        "公式Tシャツ",
+        "ライブTシャツ",
+        "バンドTシャツ"
+      ]
+    },
+    "band_merch_tshirt_with_hoodie": {
+      "label_ja": "Tシャツと薄手のパーカー",
+      "image_tags": "official band t-shirt, thin hoodie, layered clothing, relaxed style",
+      "aliases": [
+        "t-shirt and hoodie"
+      ]
+    },
+    "chester_coat_and_beret": {
+      "label_ja": "チェスターコートとベレー帽",
+      "image_tags": "stylish chester coat, wool overcoat, beret hat, fashionable winter outfit, elegant attire, artistic style",
+      "aliases": [
+        "コート",
+        "ベレー帽",
+        "winter_coat"
+      ]
+    },
+    "one_piece_dress": {
+      "label_ja": "ワンピース",
+      "image_tags": "one-piece dress, feminine dress, stylish outfit",
+      "aliases": [
+        "dress",
+        "ドレス",
+        "white dress",
+        "formal suit",
+        "evening gown"
+      ]
+    },
+    "nurse_uniform_with_cardigan": {
+      "label_ja": "白衣とカーディガン",
+      "image_tags": "white lab coat, medical uniform, cardigan over coat, professional attire, hospital wear",
+      "aliases": [
+        "medical white coat",
+        "nursing outfit",
+        "medical uniform"
+      ]
+    },
+    "nurse_uniform_with_cardigan_gloves_mask": {
+      "label_ja": "白衣とカーディガン",
+      "image_tags": "white lab coat, removing cardigan, medical gloves, surgical mask, preparing for surgery",
+      "aliases": [
+        "medical uniform"
+      ]
+    },
+    "orange_rescue_uniform_with_helmet": {
+      "label_ja": "オレンジの救助服とヘルメット",
+      "image_tags": "orange rescue uniform, firefighter gear, safety helmet, heavy duty fabric, professional uniform",
+      "aliases": [
+        "firefighter outfit",
+        "rescue suit",
+        "救助服",
+        "ヘルメット"
+      ]
+    },
+    "sparkly_stage_costume": {
+      "label_ja": "キラキラしたステージ衣装",
+      "image_tags": "glittering idol costume, sparkly stage outfit, sequins, frills, performer attire, elaborate design",
+      "aliases": [
+        "ステージ衣装",
+        "衣装",
+        "アイドル衣装",
+        "ダンス衣装"
+      ]
+    },
+    "casual_clothes": {
+      "label_ja": "私服",
+      "image_tags": "casual outfit, everyday clothes, non-costume",
+      "aliases": [
+        "private clothes",
+        "drying off",
+        "部屋着",
+        "casual wear",
+        "私服",
+        "home wear",
+        "relaxed outfit",
+        "コートを脱いだ状態",
+        "swimwear",
+        "パーカーとジーンズ",
+        "デニム",
+        "スニーカー"
+      ]
+    },
+    "wet_outerwear": {
+      "label_ja": "濡れたコートと靴",
+      "image_tags": "wet coat, soaked clothes, water dripping, wet shoes, damp fabric, rainy day aftermath",
+      "aliases": [
+        "soaked clothing",
+        "タキシード",
+        "革のライダース"
+      ]
+    },
+    "white_shirt": {
+      "label_ja": "白いシャツ",
+      "image_tags": "white shirt, upper body only, professional look",
+      "aliases": []
+    },
+    "white_shirt_with_cardigan": {
+      "label_ja": "白シャツとカーディガン",
+      "image_tags": "white shirt, knit cardigan, layered clothing, professional casual",
+      "aliases": [
+        "office wear",
+        "白シャツとカーディガン"
+      ]
+    },
+    "acid_resistant_vinyl_coat": {
+      "label_ja": "防塵仕様のビニールコート",
+      "image_tags": "heavy vinyl coat, hood up, waterproof, acid resistant, protective gear, futuristic outerwear",
+      "aliases": [
+        "ビニールコート",
+        "防塵コート",
+        "space suit",
+        "visor suit"
+      ]
+    },
+    "cyber_suit": {
+      "label_ja": "ハッキング用サイバースーツ",
+      "image_tags": "hacking suit, cybernetic suit, sensor-equipped clothing, futuristic tech wear, sleek design, glowing accents",
+      "aliases": [
+        "cyborg suit",
+        "metallic armor"
+      ]
+    },
+    "station_jumpsuit": {
+      "label_ja": "ステーション制服のジャンプスーツ",
+      "image_tags": "station jumpsuit, futuristic uniform, sci-fi workwear, sleek design, functional clothing",
+      "aliases": [
+        "space station uniform",
+        "work jumpsuit",
+        "white undersuit",
+        "base suit"
+      ]
+    },
+    "light_blue_medical_gown": {
+      "label_ja": "薄手の青い医療用ガウン",
+      "image_tags": "light blue medical gown, thin fabric, hospital attire, clinical wear",
+      "aliases": [
+        "medical gown",
+        "clinical robe"
+      ]
+    },
+    "work_jumpsuit": {
+      "label_ja": "ロゴ入りの作業用ツナギ",
+      "image_tags": "logoed work jumpsuit, industrial uniform, cleaning outfit, heavy fabric",
+      "aliases": [
+        "overalls",
+        "worker clothes"
+      ]
+    },
+    "spring_coat": {
+      "label_ja": "薄手のスプリングコート",
+      "image_tags": "lightweight spring coat, thin outerwear, casual spring fashion, stylish coat",
+      "aliases": [
+        "light coat",
+        "spring jacket"
+      ]
+    },
+    "mountain_parka_hiking_wear": {
+      "label_ja": "マウンテンパーカーとハイキングウェア",
+      "image_tags": "heavy mountain parka, waterproof jacket, hiking pants, outdoor gear, winter layers",
+      "aliases": [
+        "winter hiking outfit",
+        "ハイキングウェア",
+        "登山服"
+      ]
+    },
+    "samue": {
+      "label_ja": "作務衣",
+      "image_tags": "samue, traditional japanese work clothes, cotton garment, relaxed fit, simple design",
+      "aliases": [
+        "traditional work wear",
+        "traditional robe"
+      ]
+    },
+    "mountain_parka_hiking_wear_gloves": {
+      "label_ja": "マウンテンパーカーとハイキングウェア",
+      "image_tags": "thick down jacket, muffler, gloves, winter gear",
+      "aliases": []
+    },
+    "sweater": {
+      "label_ja": "セーター",
+      "image_tags": "knit sweater, cozy winter wear, no down jacket",
+      "aliases": [
+        "pullover"
+      ]
+    },
+    "workout_gear": {
+      "label_ja": "運動着",
+      "image_tags": "gym clothes, athletic wear, sports outfit, sleeveless top, leggings",
+      "aliases": [
+        "training wear",
+        "gym clothes",
+        "athletic wear",
+        "training clothes",
+        "sports outfit",
+        "sports gear",
+        "陸上競技のウェア",
+        "スポーツウェア"
+      ]
+    },
+    "swimwear_and_goggles": {
+      "label_ja": "水着とゴーグル",
+      "image_tags": "swimsuit, swimming goggles, athletic swimwear",
+      "aliases": [
+        "bathing suit",
+        "summer outfit"
+      ]
+    },
+    "baseball_uniform_with_shirt": {
+      "label_ja": "野球ユニフォームとシャツ",
+      "image_tags": "baseball uniform, jersey, sports shirt, athletic wear",
+      "aliases": [
+        "ユニフォーム",
+        "baseball uniform"
+      ]
+    },
+    "baseball_uniform_with_shirt_helmet": {
+      "label_ja": "野球ユニフォームとシャツ",
+      "image_tags": "baseball uniform, jersey, sports shirt, helmet",
+      "aliases": [
+        "baseball gear"
+      ]
+    },
+    "towel_wrapped": {
+      "label_ja": "バスタオルを巻いた姿",
+      "image_tags": "body wrapped in a bath towel, wet hair, steam, after shower, no clothes visible",
+      "aliases": [
+        "after shower look",
+        "after shower"
+      ]
+    },
+    "lightweight_hoodie": {
+      "label_ja": "薄手のパーカー",
+      "image_tags": "thin hoodie, casual wear, zipped up, protective layer against wind",
+      "aliases": [
+        "zip-up hoodie",
+        "casual jacket",
+        "限定Tシャツ",
+        "パーカー",
+        "ジーンズ"
+      ]
+    },
+    "transparent_poncho_sneakers": {
+      "label_ja": "透明ポンチョとスニーカー",
+      "image_tags": "transparent poncho, clear raincoat, sneakers, wet weather gear",
+      "aliases": []
+    },
+    "limited_edition_tshirt": {
+      "label_ja": "限定Tシャツ",
+      "image_tags": "graphic t-shirt, limited edition logo, casual wear, cotton shirt",
+      "aliases": []
+    },
+    "leather_sommelier_apron": {
+      "label_ja": "革のソムリエエプロン",
+      "image_tags": "leather sommelier apron, professional attire, dark leather texture, wine expert outfit",
+      "aliases": [
+        "sommelier apron"
+      ]
+    },
+    "transparent_keeper_apron": {
+      "label_ja": "透明な飼育員エプロン",
+      "image_tags": "transparent apron, clear plastic apron, aquarium keeper uniform, workwear over clothes",
+      "aliases": [
+        "透明エプロン"
+      ]
+    },
+    "cotton_restoration_apron_with_gloves": {
+      "label_ja": "綿の修復エプロンと薄い紙手袋",
+      "image_tags": "cotton apron, thin paper gloves, workwear, protective gear",
+      "aliases": [
+        "修復エプロン",
+        "紙手袋"
+      ]
+    },
+    "heat_resistant_apron_with_face_shield": {
+      "label_ja": "耐熱エプロンとフェイスシールド",
+      "image_tags": "black heat-resistant apron, transparent face shield, protective gear, workshop attire",
+      "aliases": []
+    },
+    "fireproof_linen_apron_with_goggles": {
+      "label_ja": "防炎の生成り前掛けと透明ゴーグル",
+      "image_tags": "fireproof apron, unbleached linen texture, transparent goggles, protective eyewear, artisan workwear",
+      "aliases": []
+    }
+  }
+}
