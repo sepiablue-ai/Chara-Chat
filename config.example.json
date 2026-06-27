@@ -16,7 +16,7 @@
     "url": "http://127.0.0.1:7860",
     "enabled_by_default": true,
     "checkpoint": "Aratako/Irodori-TTS-500M-v2",
-    "reference_wav": "assets\\audio\\04_calm_elegant.wav",
+    "reference_dir": "assets\\audio\\reference",
     "miotts": {
       "url": "http://127.0.0.1:8001/v1/tts",
       "preset_id": "04_calm_elegant"

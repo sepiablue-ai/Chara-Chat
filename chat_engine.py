@@ -287,8 +287,22 @@ class ChatEngine:
             print(f"[TTS] 音声生成中: 「{text[:30]}...」" if len(text) > 30 else f"[TTS] 音声生成中: 「{text}」")
             t_start = time.time()
             
-            ref_wav = self.config["tts"].get("reference_wav")
-            uploaded_audio = handle_file(ref_wav) if ref_wav and os.path.exists(ref_wav) else None
+            ref_dir = self.config["tts"].get("reference_dir", "assets/audio/reference")
+            ref_wav_path = None
+            if ref_dir and os.path.exists(ref_dir) and os.path.isdir(ref_dir):
+                supported_exts = {".wav", ".mp3", ".flac", ".ogg", ".m4a"}
+                for f_name in os.listdir(ref_dir):
+                    ext = os.path.splitext(f_name)[1].lower()
+                    if ext in supported_exts:
+                        ref_wav_path = os.path.join(ref_dir, f_name)
+                        break
+
+            if ref_wav_path:
+                print(f"[TTS-Irodori] 参照音声自動検出: {os.path.basename(ref_wav_path)}")
+                uploaded_audio = handle_file(ref_wav_path)
+            else:
+                print("[TTS-Irodori] ⚠️ 参照音声ファイルが見つかりません。デフォルト音声を使用します。")
+                uploaded_audio = None
 
             result = self.tts_client.predict(
                 checkpoint=self.tts_checkpoint,
