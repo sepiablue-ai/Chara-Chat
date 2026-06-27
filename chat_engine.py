@@ -224,8 +224,13 @@ class ChatEngine:
         self.llm_url = self.config["llm"]["url"]
         self.sd_url = self.config["comfyui"]["url"]
         self.comfy_output_dir = self.config["comfyui"].get("output_dir", "")
+        self.tts_engine = self.config["tts"].get("engine", "irodori")
         self.tts_base_url = self.config["tts"]["url"]
         self.tts_checkpoint = self.config["tts"]["checkpoint"]
+        if "miotts" in self.config["tts"]:
+            self.miotts_url = self.config["tts"]["miotts"].get("url", "http://127.0.0.1:8001/v1/tts")
+            self.miotts_preset_id = self.config["tts"]["miotts"].get("preset_id", "04_calm_elegant")
+
         self.history_window = self.config["chat"]["history_window"]
         self.memory_enabled = self.config["chat"].get("memory_enabled", True)
         self.memory_recall_only = self.config["chat"].get(
@@ -251,9 +256,14 @@ class ChatEngine:
     def _setup_tts_model(self):
         """TTS Gradioクライアントを初期化（遅延初期化）"""
         if self._tts_initialized:
-            return self.tts_client is not None
+            return self.tts_client is not None or self.tts_engine == "miotts"
         self._tts_initialized = True
-        print(f"[TTS] TTS 接続中 (URL: {self.tts_base_url})")
+        
+        if self.tts_engine == "miotts":
+            print(f"[TTS] MioTTSを使用します (URL: {self.miotts_url})")
+            return True
+
+        print(f"[TTS] Irodori-TTS 接続中 (URL: {self.tts_base_url})")
         try:
             self.tts_client = Client(self.tts_base_url)
             print("[TTS] ✅ 接続成功。モデルロード開始...")
@@ -281,10 +291,14 @@ class ChatEngine:
         """テキストを音声合成してWAVファイルとして保存。パスを返す"""
         if not self._tts_initialized:
             self._setup_tts_model()
+        
+        if self.tts_engine == "miotts":
+            return self._generate_voice_miotts(text, filename)
+            
         if not text or not self.current_run_dir or not self.tts_client:
             return None
         try:
-            print(f"[TTS] 音声生成中: 「{text[:30]}...」" if len(text) > 30 else f"[TTS] 音声生成中: 「{text}」")
+            print(f"[TTS-Irodori] 音声生成中: 「{text[:30]}...」" if len(text) > 30 else f"[TTS-Irodori] 音声生成中: 「{text}」")
             t_start = time.time()
             result = self.tts_client.predict(
                 checkpoint=self.tts_checkpoint,
@@ -318,7 +332,55 @@ class ChatEngine:
                 print(f"[TTS] ❌ 音声ファイル取得失敗")
                 return None
         except Exception as e:
-            print(f"[TTS] ❌ 通信エラー: {e}")
+            print(f"[TTS-Irodori] ❌ 通信エラー: {e}")
+            return None
+
+    def _generate_voice_miotts(self, text, filename):
+        """MioTTSのAPIを用いてストリーミング生成＆再生を行う"""
+        import pyaudio
+        
+        if not text or not self.current_run_dir:
+            return None
+            
+        print(f"[TTS-MioTTS] 音声ストリーム生成中: 「{text[:30]}...」" if len(text) > 30 else f"[TTS-MioTTS] 音声ストリーム生成中: 「{text}」")
+        payload = {
+            "text": text,
+            "reference": {"type": "preset", "preset_id": self.miotts_preset_id},
+            "output": {"format": "wav"}
+        }
+        
+        try:
+            full_path = os.path.join(self.current_run_dir, filename)
+            t_start = time.time()
+            response = self.http_session.post(self.miotts_url, json=payload, stream=True, timeout=120)
+            response.raise_for_status()
+
+            p = pyaudio.PyAudio()
+            # MioTTS default: 44.1kHz, 16bit, mono
+            stream = p.open(format=pyaudio.paInt16, channels=1, rate=44100, output=True)
+
+            is_first = True
+            with open(full_path, "wb") as f:
+                for chunk in response.iter_content(chunk_size=4096):
+                    if chunk:
+                        f.write(chunk)
+                        if is_first:
+                            # 簡易的にWAVヘッダー(44bytes)をスキップして再生ノイズを防ぐ
+                            if len(chunk) > 44:
+                                stream.write(chunk[44:])
+                            is_first = False
+                        else:
+                            stream.write(chunk)
+
+            stream.stop_stream()
+            stream.close()
+            p.terminate()
+
+            elapsed = time.time() - t_start
+            print(f"[TTS-MioTTS] ✅ 完了 ({elapsed:.2f}秒): {full_path}")
+            return full_path
+        except Exception as e:
+            print(f"[TTS-MioTTS] ❌ 通信/再生エラー: {e}")
             return None
 
     def _load_voice_examples(self, path):

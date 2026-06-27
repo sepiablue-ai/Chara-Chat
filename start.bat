@@ -20,6 +20,8 @@ if not defined COMFYUI_PATH set "COMFYUI_PATH=C:\path\to\ComfyUI"
 if not defined TTS_PATH set "TTS_PATH=C:\path\to\Irodori-TTS"
 if not defined COMFYUI_GPU_ID set "COMFYUI_GPU_ID=0"
 if not defined TTS_GPU_ID set "TTS_GPU_ID=0"
+if not defined TTS_ENGINE set "TTS_ENGINE=irodori"
+
 
 set PYTHONUTF8=1
 set PYTHONIOENCODING=utf-8
@@ -78,17 +80,42 @@ pushd "%COMFYUI_PATH%"
 start /b "" .\python_embeded\python.exe -s ComfyUI\main.py --windows-standalone-build --listen --fp8_e4m3fn-text-enc --disable-auto-launch > "%LOGDIR%\comfyui_%TS%.log" 2>&1
 popd
 
-:: --- [3] Irodori-TTS ---
-echo [3/4] TTS Starting (Background) on GPU %TTS_GPU_ID%...
+:: --- [3] TTS Service ---
+if /I "%TTS_ENGINE%"=="miotts" goto start_miotts
+goto start_irodori
+
+:start_miotts
+echo [3/4] MioTTS Starting (Background)...
+pushd "%~dp0third_party\MioTTS"
+start /b "" uv run python run_server.py --llm-base-url http://localhost:11434/v1 > "%LOGDIR%\miotts_%TS%.log" 2>&1
+popd
+goto wait_services
+
+:start_irodori
+echo [3/4] Irodori-TTS Starting (Background) on GPU %TTS_GPU_ID%...
 set CUDA_VISIBLE_DEVICES=%TTS_GPU_ID%
 pushd "%TTS_PATH%"
 start /b "" uv run python gradio_app.py --server-name 0.0.0.0 --server-port 7860 > "%LOGDIR%\tts_%TS%.log" 2>&1
 popd
+goto wait_services
+
 
 :: --- Wait for services ---
+:wait_services
 echo Waiting for services to be ready...
 call :wait_port 8188 ComfyUI 60
+if /I "%TTS_ENGINE%"=="miotts" goto wait_miotts
+goto wait_irodori
+
+:wait_miotts
+call :wait_port 8001 MioTTS 60
+goto services_ready
+
+:wait_irodori
 call :wait_port 7860 Irodori-TTS 60
+goto services_ready
+
+:services_ready
 echo.
 
 :: --- [4] Chara-Chat Engine ---

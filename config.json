@@ -12,9 +12,14 @@
     "output_dir": "C:\\comfyui\\ComfyUI_windows_portable\\ComfyUI\\output"
   },
   "tts": {
+    "engine": "miotts",
     "url": "http://127.0.0.1:7860",
     "enabled_by_default": true,
-    "checkpoint": "outputs\\sophie_lora\\checkpoint_final.safetensors"
+    "checkpoint": "outputs\\sophie_lora\\checkpoint_final.safetensors",
+    "miotts": {
+      "url": "http://127.0.0.1:8001/v1/tts",
+      "preset_id": "04_calm_elegant"
+    }
   },
   "image": {
     "enabled_by_default": true,

@@ -4,6 +4,7 @@ venv/
 env/
 __pycache__/
 *.pyc
+third_party/
 
 # Application Data
 logs/
