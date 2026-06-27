@@ -11,7 +11,7 @@ from scene_state.normalizer import DynamicSceneRegistry, normalize_dynamic_candi
 from tag_utils import merge_prompt_tags
 from urllib.parse import urlparse, urlunparse
 import websockets
-from gradio_client import Client
+from gradio_client import Client, handle_file
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import shutil
 from json_repair import repair_json
@@ -286,11 +286,15 @@ class ChatEngine:
         try:
             print(f"[TTS] 音声生成中: 「{text[:30]}...」" if len(text) > 30 else f"[TTS] 音声生成中: 「{text}」")
             t_start = time.time()
+            
+            ref_wav = self.config["tts"].get("reference_wav")
+            uploaded_audio = handle_file(ref_wav) if ref_wav and os.path.exists(ref_wav) else None
+
             result = self.tts_client.predict(
                 checkpoint=self.tts_checkpoint,
                 model_device="cuda", model_precision="bf16",
                 codec_device="cuda", codec_precision="bf16",
-                text=text, uploaded_audio=None,
+                text=text, uploaded_audio=uploaded_audio,
                 num_steps=40, num_candidates=1, seed_raw="",
                 cfg_guidance_mode="independent",
                 cfg_scale_text=3.0, cfg_scale_speaker=5.0, cfg_scale_raw="",
