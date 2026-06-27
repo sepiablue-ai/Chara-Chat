@@ -583,7 +583,7 @@ class ChatEngine:
                 for key in (
                     "current_location",
                     "clothing_state",
-                    "scene_tags",
+                    "scene_prompt",
                 )
             }
             if all(partial.values()):
@@ -895,7 +895,7 @@ class ChatEngine:
     def process_chat_turn_stream(self, user_input_text, enable_image=True, enable_voice=False):
         t_turn_start = time.time()
         turn = self.session_info.get("current_turn", 0)
-        image_filename = f"chat_turn_{turn+1:02d}.png"
+        image_filename = f"chat_turn_{turn+1:02d}.webp"
         voice_filename = f"chat_turn_{turn+1:02d}.wav"
         
         parallel_gen = self.config.get("image", {}).get("parallel_generation", True)
@@ -926,14 +926,14 @@ class ChatEngine:
             f"キャラクターの服装: {self.current_state['clothing']}\n"
             f"【直前の情景】{last_scene_description}\n"
             f"【ユーザーの行動】「{user_input_text}」\n"
-            "これに対する現在の情景、キャラクターの反応、および画像生成用のタグをJSONで出力してください。\n"
+            "これに対する現在の情景、キャラクターの反応、および画像生成用の英文プロンプトをJSONで出力してください。\n"
             "場所や服装を変更する場合だけstate_changesの対応フラグをtrueにしてください。"
             "変更しない場合は現在の状態をそのまま返してください。"
         )
         if clothing_override:
             instruction += (
                 f"\n【このターンで確定する服装】{clothing_override}。"
-                "台詞上の反応に関係なくclothing_stateとscene_tagsへ反映してください。"
+                "台詞上の反応に関係なくclothing_stateとscene_promptへ反映してください。"
             )
         if explicit_transition:
             hints = []
@@ -942,7 +942,7 @@ class ChatEngine:
             if explicit_transition.get("clothing"):
                 hints.append(f"clothing_state={explicit_transition['clothing']}")
             if explicit_transition.get("tag_hint"):
-                hints.append(f"scene_tags should include: {explicit_transition['tag_hint']}")
+                hints.append(f"scene_prompt should include: {explicit_transition['tag_hint']}")
             instruction += (
                 "\n【明示的な場面遷移ヒント】"
                 + " / ".join(hints)
@@ -995,7 +995,7 @@ class ChatEngine:
 
         def validate_fields(result: dict):
             missing = []
-            for k in ("character_dialogue", "scene_tags"):
+            for k in ("character_dialogue", "scene_prompt"):
                 val = result.get(k, "")
                 if isinstance(val, list):
                     val = ", ".join([str(v) for v in val])
@@ -1029,13 +1029,13 @@ class ChatEngine:
                 or partial["clothing_state"].strip()
                 or self.current_state["clothing"]
             )
-            llm_tags = sanitize_scene_tags(partial["scene_tags"])
+            llm_prompt = partial.get("scene_prompt", "").strip()
             base_clothing, negative_clothing = self._get_clothing_tags(clothing)
-            image_tags = merge_prompt_tags(base_clothing, llm_tags)
+            image_prompt = f"{base_clothing}, {llm_prompt}" if base_clothing else llm_prompt
             image_started_at = time.time()
             image_future = executor.submit(
                 self._generate_image,
-                image_tags,
+                image_prompt,
                 image_filename,
                 negative_clothing,
             )
@@ -1082,16 +1082,16 @@ class ChatEngine:
         if clothing_override or (state_changes["clothing_changed"] and new_clothing):
             self.current_state["clothing"] = new_clothing
 
-        raw_tags = result.get("scene_tags", "1girl")
-        llm_tags = sanitize_scene_tags(raw_tags)
+        llm_prompt = result.get("scene_prompt", "A woman is standing.").strip()
         if explicit_transition and explicit_transition.get("tag_hint"):
-            llm_tags = merge_prompt_tags(llm_tags, explicit_transition["tag_hint"])
-        scene_desc = build_scene_context(
-            user_input_text,
-            llm_tags,
-            self.current_state["location"],
-            self.current_state["clothing"],
-        )
+            llm_prompt = f"{explicit_transition['tag_hint']}, {llm_prompt}"
+        
+        # 履歴記録用のコンテキストを構築（文章が壊れないように手動で結合）
+        scene_desc = f"location={self.current_state['location']}; clothing={self.current_state['clothing']}"
+        if user_input_text.strip():
+            scene_desc += f"; previous_user_action={user_input_text.strip()[:100]}"
+        if llm_prompt:
+            scene_desc += f"; scene_prompt={llm_prompt}"
 
         compact_content = json.dumps({
             "current_location": self.current_state["location"],
@@ -1107,7 +1107,7 @@ class ChatEngine:
 
         # 服装タグの強制付与
         base_clothing, negative_clothing = self._get_clothing_tags(self.current_state["clothing"])
-        image_tags = merge_prompt_tags(base_clothing, llm_tags)
+        image_prompt = f"{base_clothing}, {llm_prompt}" if base_clothing else llm_prompt
 
         image_path = None
         voice_path = None
@@ -1116,7 +1116,7 @@ class ChatEngine:
             image_started_at = time.time()
             image_future = executor.submit(
                 self._generate_image,
-                image_tags,
+                image_prompt,
                 image_filename,
                 negative_clothing,
             )
@@ -1133,7 +1133,7 @@ class ChatEngine:
             "voice_path": None,
             "voice_filename": None,
             "state_changes": state_changes,
-            "tags": image_tags,
+            "scene_prompt": image_prompt,
             "location": self.current_state["location"],
             "clothing": self.current_state["clothing"],
         }
@@ -1260,26 +1260,38 @@ class ChatEngine:
         with open(json_path, "r", encoding="utf-8") as f:
             workflow = json.load(f)
 
-        base_positive = self.character_config.get("base_positive_prompt", "1girl, masterpiece, best quality, good quality, sensitive,")
-        final_prompt = f"{base_positive} {dynamic_tags}"
-        
-        lora_name = self.character_config.get("lora_name", "character_lora.safetensors")
+        # prefix.md (固定プロンプト) をロード
+        prompter_dir = os.environ.get("ANIMA_PROMPTER_DIR", "")
+        prefix_path = os.path.join(prompter_dir, "prefix.md") if prompter_dir else "prefix.md"
+        mandatory_prompt = "masterpiece, best quality,score_9,score_8_up,black hair, black eyes,explicit, "
+        if os.path.exists(prefix_path):
+            try:
+                with open(prefix_path, "r", encoding="utf-8") as f_prefix:
+                    content = f_prefix.read().strip()
+                    if content:
+                        mandatory_prompt = content
+            except Exception as e:
+                print(f"[WARN] prefix.md のロード失敗: {e}")
 
-        for node_id, node_data in workflow.items():
-            class_type = node_data.get("class_type", "")
-            if class_type == "KSampler":
-                node_data["inputs"]["seed"] = random.randint(0, 2**63 - 1)
-            elif class_type == "LoraLoader":
-                lora_val = node_data["inputs"].get("lora_name", "")
-                if isinstance(lora_val, str) and "___LORA_NAME___" in lora_val:
-                    node_data["inputs"]["lora_name"] = lora_name
-            elif class_type == "CLIPTextEncode":
-                text_val = node_data["inputs"].get("text", "")
-                if isinstance(text_val, str):
-                    if "___POSITIVE_PROMPT___" in text_val:
-                        node_data["inputs"]["text"] = final_prompt
-                    elif "___NEGATIVE_PROMPT___" in text_val and extra_negative:
-                        node_data["inputs"]["text"] = f"{text_val}, {extra_negative}"
+        base_positive = self.character_config.get("base_positive_prompt", "sayaka,")
+        final_prompt = f"{base_positive} {dynamic_tags}".strip()
+        positive_text = f"{mandatory_prompt},\n{final_prompt}"
+
+        # Anima用のノードマッピング書き換え
+        if "60:11" in workflow:
+            workflow["60:11"]["inputs"]["text"] = positive_text
+        if "60:12" in workflow and extra_negative.strip():
+            workflow["60:12"]["inputs"]["text"] = f"{workflow['60:12']['inputs']['text']}, {extra_negative.strip()}"
+        if "60:19" in workflow:
+            workflow["60:19"]["inputs"]["seed"] = random.randint(0, 2**63 - 1)
+        if "60:28" in workflow:
+            workflow["60:28"]["inputs"]["width"] = 1024
+            workflow["60:28"]["inputs"]["height"] = 1536
+        if "60:61" in workflow:
+            lora_name = self.character_config.get("lora_name", "sayaka_anima\\sayaka_anima_v1.safetensors")
+            workflow["60:61"]["inputs"]["lora_name"] = lora_name
+        if "60:44" in workflow:
+            workflow["60:44"]["inputs"]["unet_name"] = "anima_pencil-v2.0.0.safetensors"
 
         print(f"[ComfyUI] プロンプト:\n{final_prompt}")
         prompt_id = None

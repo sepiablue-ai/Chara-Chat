@@ -33,8 +33,8 @@
   },
   "character": {
     "display_name": "AI Character",
-    "lora_name": "character_lora.safetensors",
-    "base_positive_prompt": "1girl, character, solo, masterpiece, best quality, good quality, smiling,",
+    "lora_name": "sayaka_anima\\sayaka_anima_v1.safetensors",
+    "base_positive_prompt": "sayaka,",
     "prompts": {
       "character_setting": "prompts/character_setting.md",
       "main_director": "prompts/main_ai_director.md",

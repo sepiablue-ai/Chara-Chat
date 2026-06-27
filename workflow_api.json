@@ -1,26 +1,113 @@
 {
-  "3": {
+  "65": {
     "inputs": {
-      "seed": 1107562533721401,
-      "steps": 24,
-      "cfg": 5.5,
-      "sampler_name": "euler",
-      "scheduler": "sgm_uniform",
+      "filename_prefix": "ComfyUI",
+      "fps": 6,
+      "lossless": false,
+      "quality": 90,
+      "method": "default",
+      "images": [
+        "60:8",
+        0
+      ]
+    },
+    "class_type": "SaveAnimatedWEBP",
+    "_meta": {
+      "title": "アニメーションWEBPを保存"
+    }
+  },
+  "60:15": {
+    "inputs": {
+      "vae_name": "qwen_image_vae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "VAEを読み込む"
+    }
+  },
+  "60:8": {
+    "inputs": {
+      "samples": [
+        "60:19",
+        0
+      ],
+      "vae": [
+        "60:15",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAEデコード"
+    }
+  },
+  "60:28": {
+    "inputs": {
+      "width": 1024,
+      "height": 1536,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "空の潜在画像"
+    }
+  },
+  "60:44": {
+    "inputs": {
+      "unet_name": "animality_ap3.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "拡散モデルを読み込む"
+    }
+  },
+  "60:45": {
+    "inputs": {
+      "clip_name": "qwen_3_06b_base.safetensors",
+      "type": "stable_diffusion",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "CLIPを読み込む"
+    }
+  },
+  "60:11": {
+    "inputs": {
+      "text": "masterpiece, best quality,score_9,score_8_up,black hair, black eyes,updo,\nA woman is standing.",
+      "clip": [
+        "60:62",
+        1
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "60:19": {
+    "inputs": {
+      "seed": 699237413572126,
+      "steps": 10,
+      "cfg": 1,
+      "sampler_name": "er_sde",
+      "scheduler": "simple",
       "denoise": 1,
       "model": [
-        "11",
+        "60:62",
         0
       ],
       "positive": [
-        "6",
+        "60:11",
         0
       ],
       "negative": [
-        "7",
+        "60:12",
         0
       ],
       "latent_image": [
-        "5",
+        "60:28",
         0
       ]
     },
@@ -29,93 +116,18 @@
       "title": "Kサンプラー"
     }
   },
-  "4": {
+  "60:61": {
     "inputs": {
-      "ckpt_name": "illustriousXLPersonalMerge_v30Noob10based.safetensors"
-    },
-    "class_type": "CheckpointLoaderSimple",
-    "_meta": {
-      "title": "チェックポイントを読み込む"
-    }
-  },
-  "5": {
-    "inputs": {
-      "width": 768,
-      "height": 1152,
-      "batch_size": 1
-    },
-    "class_type": "EmptyLatentImage",
-    "_meta": {
-      "title": "空の潜在画像"
-    }
-  },
-  "6": {
-    "inputs": {
-      "text": "___POSITIVE_PROMPT___",
-      "clip": [
-        "10",
-        1
-      ]
-    },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIPテキストエンコード（プロンプト）"
-    }
-  },
-  "7": {
-    "inputs": {
-      "text": "lowres, (bad), error, fewer, extra, missing, worst quality, jpeg artifacts, low quality, unfinished, displeasing, oldest, early, chromatic aberration, signature, extra digits, artistic error, username, tongue,",
-      "clip": [
-        "10",
-        1
-      ]
-    },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIPテキストエンコード（プロンプト）"
-    }
-  },
-  "8": {
-    "inputs": {
-      "samples": [
-        "3",
-        0
-      ],
-      "vae": [
-        "4",
-        2
-      ]
-    },
-    "class_type": "VAEDecode",
-    "_meta": {
-      "title": "VAEデコード"
-    }
-  },
-  "9": {
-    "inputs": {
-      "filename_prefix": "AI_Chat_App",
-      "images": [
-        "8",
-        0
-      ]
-    },
-    "class_type": "SaveImage",
-    "_meta": {
-      "title": "画像を保存"
-    }
-  },
-  "10": {
-    "inputs": {
-      "lora_name": "___LORA_NAME___",
-      "strength_model": 0.5,
-      "strength_clip": 0.5,
+      "lora_name": "sayaka_anima\\sayaka_anima_v1.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
       "model": [
-        "4",
+        "60:44",
         0
       ],
       "clip": [
-        "4",
-        1
+        "60:45",
+        0
       ]
     },
     "class_type": "LoraLoader",
@@ -123,26 +135,36 @@
       "title": "LoRAを読み込む"
     }
   },
-  "11": {
+  "60:12": {
     "inputs": {
-      "enabled": true,
-      "blend_weight": 0.4,
-      "degree": 4,
-      "ridge_lambda": 0.1,
-      "window_size": 2,
-      "flex_window": 0.75,
-      "warmup_steps": 5,
-      "tail_actual_steps": 4,
-      "min_fit_points": 6,
-      "debug": false,
-      "model": [
-        "10",
-        0
+      "text": "worst quality, low quality, score_1, score_2, score_3, blurry, jpeg artifacts, sepia",
+      "clip": [
+        "60:62",
+        1
       ]
     },
-    "class_type": "SpectrumApplySDXL",
+    "class_type": "CLIPTextEncode",
     "_meta": {
-      "title": "Spectrum Apply SDXL"
+      "title": "CLIP Text Encode (Negative Prompt)"
+    }
+  },
+  "60:62": {
+    "inputs": {
+      "lora_name": "anima-turbo-lora-v0.1.safetensors",
+      "strength_model": 1,
+      "strength_clip": 1,
+      "model": [
+        "60:61",
+        0
+      ],
+      "clip": [
+        "60:61",
+        1
+      ]
+    },
+    "class_type": "LoraLoader",
+    "_meta": {
+      "title": "Anima Turbo LoRA v0.1"
     }
   }
 }

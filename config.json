@@ -37,8 +37,8 @@
   },
   "character": {
     "display_name": "さやか",
-    "lora_name": "sophie_iluxlv30.safetensors",
-    "base_positive_prompt": "1girl, charsophie, solo, black hair, black eyes, updo, masterpiece, best quality, good quality, smiling,",
+    "lora_name": "sayaka_anima\\sayaka_anima_v1.safetensors",
+    "base_positive_prompt": "sayaka,",
     "prompts": {
       "character_setting": "prompts/character_setting.md",
       "main_director": "prompts/main_ai_director.md",

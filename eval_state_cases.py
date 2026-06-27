@@ -68,7 +68,7 @@ def main():
                 "location": final.get("location"),
                 "clothing": final.get("clothing"),
                 "state_changes": final.get("state_changes"),
-                "tags": final.get("tags"),
+                "scene_prompt": final.get("scene_prompt"),
                 "dialogue": final.get("character_dialogue"),
             }
         )
